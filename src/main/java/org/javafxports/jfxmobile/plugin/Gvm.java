@@ -45,62 +45,7 @@ import java.util.List;
 
 public class Gvm {
 
-/*
-
-    public static void build(Project project, String gvm, String target, String[] forcelinkClasses ) {
-        boolean isLaunchOnDevice = "device".equals(target);
-        Map<String, ?> properties = project.getProperties();
-
-//        System.out.println("IOS Extension: ForceLink classes: ");
-//        System.out.println(forcelinkClasses.getClass().getName());
-//        for( String cls: forcelinkClasses) {
-//            System.out.println(cls);
-//        }
-
-        ConfigurationContainer configurations = project.getConfigurations();
-        Set<File> files = configurations.getByName("iosRuntime").resolve();
-        // TODO: only include jars that are relevant to gvm: the built jar file + its dependencies
-//        GvmBuilder gvmBuilder = GvmBuilder.create().buildDirName(project.getBuildDir().getAbsolutePath())
-//                .rootdDirName(project.getRootDir().getAbsolutePath())
-//                .jarDependencies(files.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()))
-//                .mainClassName((String) properties.get("mainClassName"))
-//                .variant(gvm)
-//                .target(target)
-//                .appName(project.getName());
-//            gvmBuilder.build();
-
-        try {
-            String rootDirName = project.getRootDir().getAbsolutePath();
-            String appName = project.getName();
-            String mainClassName = (String) properties.get("mainClassName");
-
-//            String forcelinkClasses = configurations.
-            String vm = "boson";
-            BosonAppBuilder appBuilder = new BosonAppBuilder();
-            appBuilder.rootDir(rootDirName).appId(mainClassName).appName(appName);
-            appBuilder.jarDependencies(files.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
-            if (isLaunchOnDevice) {
-                appBuilder.arch("arm64");
-            }
-            if (vm!= null) {
-                appBuilder.vm(vm);
-            }
-            appBuilder.build();
-            String launchDir = rootDirName + "/build/gvm/" + appName + ".app";
-            if (isLaunchOnDevice) {
-                appBuilder.launchOnDevice(launchDir);
-            } else {
-                appBuilder.launchOnSimulator(launchDir);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-*/
-
     public static void build(String target, Project project ) {
-        System.out.println("PLUGIN: GVM BUILD CALLED, target = "+target);
         GvmConfig config = new GvmConfig(project);
         boolean isLaunchOnDevice = "device".equals(target);
 
@@ -120,9 +65,7 @@ public class Gvm {
         }
 
         try {
-            String vm = "boson";
-                 //   System.out.println("GVM BUILDING!!!!!!!! classesfiles = "+classes.getFiles());
-
+            String vm = "boson"; 
             BosonAppBuilder appBuilder = new BosonAppBuilder();
             appBuilder.vm(vm)
                     .rootDir(config.getRootDirName())
@@ -132,10 +75,6 @@ public class Gvm {
                     .appName(config.getAppName())
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
                     .jarDependencies( config.getJarDependecies());
-            System.out.println("p = "+project);
-            System.out.println("pex = "+project.getExtensions());
-            System.out.println("pexios = "+project.getExtensions().findByType(JFXMobileExtension.class));
-            System.out.println("pexiost = "+project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getTemporaryDirectory());
             String tempDir =  project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getTemporaryDirectory().getAbsolutePath();
             String nativeLibDir =  project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getNativeDirectory();
 
@@ -153,13 +92,11 @@ public class Gvm {
                     nativeLibs.add(nativeLib.getAbsolutePath());
                 }
             }
-            System.out.println("NATIVE LIBS = "+nativeLibs);
             appBuilder.nativeLibs(nativeLibs);
 
             if (isLaunchOnDevice) {
                 appBuilder.arch("arm64");
             }
-            System.out.println("Plugin will now build bosonappbuilder");
             appBuilder.build();
             if (isLaunchOnDevice) {
                 appBuilder.launchOnDevice(config.getLaunchDir());
