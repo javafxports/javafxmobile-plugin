@@ -411,9 +411,11 @@ public class DesugarTask extends DefaultTask {
 
         @Override
         public void execute(DesugarTask desugarTask) {
+            String bcp = System.getProperty("sun.boot.class.path");
             desugarTask.androidJarClasspath = () -> androidExtension.getProject().getConfigurations().getByName("androidBootclasspath").resolve();
-            desugarTask.compilationBootclasspath = PathUtils.getClassPathItems(System.getProperty("sun.boot.class.path"));
-
+            if (bcp != null) {
+                desugarTask.compilationBootclasspath = PathUtils.getClassPathItems(System.getProperty("sun.boot.class.path"));
+            }
             desugarTask.userCache = androidExtension.getBuildCache();
             desugarTask.setMinSdk(Integer.parseInt(androidExtension.getMinSdkVersion()));
 
