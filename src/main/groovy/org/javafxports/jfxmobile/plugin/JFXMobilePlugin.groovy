@@ -604,37 +604,29 @@ if (!gvm) {
             include 'native/*.a'
         }
 
-        // copies native libraries from source jniLibs folder into temporary native library folder
-        Copy copyNativeLibsTask = project.tasks.create("iosCopyNativeLibs", Copy) {
-            from project.jfxmobile.ios.nativeDirectory
-            into project.file("${project.jfxmobile.ios.temporaryDirectory}/native")
-            include '*.a'
-        }
-        copyNativeLibsTask.dependsOn extractNativeLibsTask
-
         IosInstall iosInstallTask = project.tasks.create("iosInstall", IosInstall)
         iosInstallTask.description("Install the application on a connected ios device.")
-        iosInstallTask.dependsOn([project.tasks.iosClasses, copyNativeLibsTask])
+        iosInstallTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iosInstallTask)
         
         IosDevice iosDeviceTask = project.tasks.create("launchIOSDevice", IosDevice)
         iosDeviceTask.description("Launch the application on a connected ios device.")
-        iosDeviceTask.dependsOn([project.tasks.iosClasses, copyNativeLibsTask])
+        iosDeviceTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iosDeviceTask)
 
         IPadSimulator ipadSimulatorTask = project.tasks.create("launchIPadSimulator", IPadSimulator)
         ipadSimulatorTask.description("Launch the application on an iPad simulator.")
-        ipadSimulatorTask.dependsOn([project.tasks.iosClasses, copyNativeLibsTask])
+        ipadSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(ipadSimulatorTask)
 
         IPhoneSimulator iphoneSimulatorTask = project.tasks.create("launchIPhoneSimulator", IPhoneSimulator)
         iphoneSimulatorTask.description("Launch the application on an iPhone simulator.")
-        iphoneSimulatorTask.dependsOn([project.tasks.iosClasses, copyNativeLibsTask])
+        iphoneSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iphoneSimulatorTask)
 
         CreateIpa createIpaTask = project.tasks.create("createIpa", CreateIpa)
         createIpaTask.description("Generates an iOS ipa containing the JavaFX application.")
-        createIpaTask.dependsOn([project.tasks.iosClasses, copyNativeLibsTask])
+        createIpaTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(createIpaTask)
 
         IosTask iosTask = project.tasks.create('ios', IosTask)
