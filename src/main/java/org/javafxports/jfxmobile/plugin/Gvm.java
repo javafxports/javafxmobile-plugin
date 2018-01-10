@@ -63,7 +63,13 @@ public class Gvm {
             classes.addAll(iosSourceSet.getOutput().getClassesDirs().getFiles());
             resources.add(iosSourceSet.getOutput().getResourcesDir());
         }
+        
 
+        String logLevelName = "info";
+        if (project.hasProperty("gvmlog")) {
+            String lll = (String)project.getProperties().get("gvmlog");
+            logLevelName = lll;
+        }
         try {
             String vm = "boson"; 
             BosonAppBuilder appBuilder = new BosonAppBuilder();
@@ -73,6 +79,7 @@ public class Gvm {
                     .resourcesDirs(resources)
                     .appId(config.getMainClassName())
                     .appName(config.getAppName())
+                    .logLevel(logLevelName)
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
                     .jarDependencies( config.getJarDependecies());
             String tempDir =  project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getTemporaryDirectory().getAbsolutePath();
