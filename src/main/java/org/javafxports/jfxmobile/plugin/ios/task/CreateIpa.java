@@ -29,15 +29,9 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.javafxports.jfxmobile.plugin.ios.task
+package org.javafxports.jfxmobile.plugin.ios.task;
 
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.DefaultTask;
 
-
-/**
- *
- * @author joeri
- */
-class CreateIpa extends BaseIosTask {
-
+public class CreateIpa extends DefaultTask {
 }

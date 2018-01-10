@@ -29,28 +29,9 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.javafxports.jfxmobile.plugin.ios.task
+package org.javafxports.jfxmobile.plugin.ios.task;
 
-import org.javafxports.jfxmobile.plugin.GvmConfig
-import org.javafxports.jfxmobile.plugin.Gvm
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.DefaultTask;
 
-/**
- *
- * @author joeri
- */
-class IosDevice extends BaseIosTask {
-
-    @TaskAction
-    void iosDevice() {
-
-        if (!project.jfxmobile.gvm.isEmpty()) {
-            Gvm.build("device", project)
-            return;
-        }
-
-    }
-
-
+public class IosInstall extends DefaultTask {
 }
-

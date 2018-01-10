@@ -36,7 +36,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.ConfigureUtil
 
-import org.javafxports.jfxmobile.plugin.android.AndroidExtension;
+import org.javafxports.jfxmobile.plugin.android.AndroidExtension
 import org.javafxports.jfxmobile.plugin.embedded.EmbeddedExtension
 import org.javafxports.jfxmobile.plugin.ios.IosExtension
 
@@ -48,10 +48,9 @@ class JFXMobileExtension {
 
     String javacEncoding = 'utf-8'
     String javafxportsVersion = "8.60.9"
-    String gvm = ""
 
     DownConfiguration downConfig
-    
+
     AndroidExtension androidExtension
     IosExtension iosExtension
 

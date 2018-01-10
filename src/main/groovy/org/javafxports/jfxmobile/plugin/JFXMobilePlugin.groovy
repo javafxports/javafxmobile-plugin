@@ -71,13 +71,11 @@ import org.javafxports.jfxmobile.plugin.android.task.WriteDexInputListFile
 import org.javafxports.jfxmobile.plugin.embedded.RemotePlatformConfiguration
 import org.javafxports.jfxmobile.plugin.embedded.task.CopyRemoteDir
 import org.javafxports.jfxmobile.plugin.embedded.task.RunEmbedded
-import org.javafxports.jfxmobile.plugin.ios.task.CreateDefaultLauncher
+
 import org.javafxports.jfxmobile.plugin.ios.task.CreateIpa
-import org.javafxports.jfxmobile.plugin.ios.task.IPadSimulator
-import org.javafxports.jfxmobile.plugin.ios.task.IPhoneSimulator
 import org.javafxports.jfxmobile.plugin.ios.task.IosDevice
 import org.javafxports.jfxmobile.plugin.ios.task.IosInstall
-import org.javafxports.jfxmobile.plugin.ios.task.IosTask
+import org.javafxports.jfxmobile.plugin.ios.task.IosSimulator
 import proguard.gradle.ProGuardTask
 
 import javax.inject.Inject
@@ -100,7 +98,6 @@ class JFXMobilePlugin implements Plugin<Project> {
     List<Task> embeddedTasks = []
 
     private boolean hasAndroidMavenRepository = false
-    private boolean gvm = true;
 
     @Inject
     JFXMobilePlugin(ObjectFactory objectFactory, ToolingModelBuilderRegistry registry) {
@@ -252,10 +249,6 @@ class JFXMobilePlugin implements Plugin<Project> {
                 androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
                     force = true
                 }
-                project.logger.info("Using GVM-enabled plugin, gvm = " + gvm)
-                if (!gvm) {
-                    iosSdk "org.javafxports:ios-sdk:${project.jfxmobile.javafxportsVersion}@zip"
-                }
                 dalvikSdk "org.javafxports:dalvik-sdk:${project.jfxmobile.javafxportsVersion}@zip"
                 sshAntTask 'org.apache.ant:ant-jsch:1.9.6'
             }
@@ -358,19 +351,6 @@ class JFXMobilePlugin implements Plugin<Project> {
 
             // only configure ios when one of the ios tasks will be run
             if (iosTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
-if (!gvm) {
-
-                configureIos()
-                project.dependencies {
-                    iosRuntime project.fileTree("${project.jfxmobile.ios.iosSdkLib}/ext") {
-                        include '*.jar'
-                    }
-
-                    iosBootclasspath project.fileTree("${project.jfxmobile.ios.iosSdkLib}/ext") {
-                        include 'compat-1.0.0.jar'
-                    }
-                }
-}
                 // configure ios boot classpath
                 project.tasks.compileIosJava {
                     options.bootClasspath = project.configurations.iosBootclasspath.asPath
@@ -583,19 +563,6 @@ if (!gvm) {
     }
 
     private void createIosTasks() {
-        if (project.jfxmobile.ios.launcherClassName == 'org.javafxports.jfxmobile.ios.BasicLauncher') {
-            CreateDefaultLauncher createDefaultLauncherTask = project.tasks.create('createDefaultIOSLauncher', CreateDefaultLauncher)
-            createDefaultLauncherTask.conventionMapping.map('mainClassName') { project.mainClassName }
-            createDefaultLauncherTask.conventionMapping.map('preloaderClassName') { project.preloaderClassName }
-            createDefaultLauncherTask.outputFile = project.file("${project.jfxmobile.ios.temporaryDirectory}/sources/org/javafxports/jfxmobile/ios/BasicLauncher.java")
-
-            project.tasks.compileIosJava {
-// not if GVM TODO
-                // dependsOn createDefaultLauncherTask
-                source project.file("${project.jfxmobile.ios.temporaryDirectory}/sources")
-            }
-        }
-
         // NOTE: the from input is taken from the iosRuntime configuration, but can only be applied
         // when that configuration is completely configured. the from is applied above at a later
         // time after the project's taskGraph is ready
@@ -605,33 +572,29 @@ if (!gvm) {
         }
 
         IosInstall iosInstallTask = project.tasks.create("iosInstall", IosInstall)
-        iosInstallTask.description("Install the application on a connected ios device.")
+        iosInstallTask.description = "Install the application on a connected ios device."
         iosInstallTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iosInstallTask)
         
         IosDevice iosDeviceTask = project.tasks.create("launchIOSDevice", IosDevice)
-        iosDeviceTask.description("Launch the application on a connected ios device.")
+        iosDeviceTask.description = "Launch the application on a connected ios device."
         iosDeviceTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iosDeviceTask)
 
-        IPadSimulator ipadSimulatorTask = project.tasks.create("launchIPadSimulator", IPadSimulator)
-        ipadSimulatorTask.description("Launch the application on an iPad simulator.")
+        IosSimulator ipadSimulatorTask = project.tasks.create("launchIPadSimulator", IosSimulator)
+        ipadSimulatorTask.description = "Launch the application on an iPad simulator."
         ipadSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(ipadSimulatorTask)
 
-        IPhoneSimulator iphoneSimulatorTask = project.tasks.create("launchIPhoneSimulator", IPhoneSimulator)
-        iphoneSimulatorTask.description("Launch the application on an iPhone simulator.")
+        IosSimulator iphoneSimulatorTask = project.tasks.create("launchIPhoneSimulator", IosSimulator)
+        iphoneSimulatorTask.description = "Launch the application on an iPhone simulator."
         iphoneSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(iphoneSimulatorTask)
 
-        CreateIpa createIpaTask = project.tasks.create("createIpa", CreateIpa)
-        createIpaTask.description("Generates an iOS ipa containing the JavaFX application.")
+        CreateIpa createIpaTask = project.tasks.create("ios", CreateIpa)
+        createIpaTask.description = "Generates an iOS ipa containing the JavaFX application."
         createIpaTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
         iosTasks.add(createIpaTask)
-
-        IosTask iosTask = project.tasks.create('ios', IosTask)
-        iosTask.dependsOn createIpaTask
-        iosTasks.add(iosTask)
     }
 
     private void createEmbeddedTasks() {

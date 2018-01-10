@@ -29,19 +29,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.javafxports.jfxmobile.plugin.ios.task
+package org.javafxports.jfxmobile.plugin.ios.task;
 
-import com.dd.plist.NSArray
-import com.dd.plist.NSObject
-import com.dd.plist.NSString
-import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
+import org.javafxports.jfxmobile.plugin.Gvm;
 
-/**
- *
- * @author joeri
- */
-abstract class BaseIosTask extends DefaultTask {
+public class IosSimulator extends DefaultTask {
 
-    
+    @TaskAction
+    public void action() {
+        Gvm.build("simulator", getProject());
+    }
 }
