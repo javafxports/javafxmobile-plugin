@@ -35,12 +35,9 @@ import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.build.api.transform.QualifiedContent;
-import com.android.build.api.transform.Status;
-import com.android.build.api.transform.TransformInvocation;
 import com.android.build.gradle.internal.LoggerWrapper;
 import com.android.build.gradle.internal.scope.TaskConfigAction;
 import com.android.build.gradle.internal.transforms.DesugarTransform;
-import com.android.build.gradle.internal.transforms.TransformInputUtil;
 import com.android.builder.Version;
 import com.android.builder.core.DesugarProcessBuilder;
 import com.android.builder.utils.FileCache;
@@ -415,6 +412,8 @@ public class DesugarTask extends DefaultTask {
             desugarTask.androidJarClasspath = () -> androidExtension.getProject().getConfigurations().getByName("androidBootclasspath").resolve();
             if (bcp != null) {
                 desugarTask.compilationBootclasspath = PathUtils.getClassPathItems(System.getProperty("sun.boot.class.path"));
+            } else {
+                desugarTask.compilationBootclasspath = Collections.emptyList();
             }
             desugarTask.userCache = androidExtension.getBuildCache();
             desugarTask.setMinSdk(Integer.parseInt(androidExtension.getMinSdkVersion()));
