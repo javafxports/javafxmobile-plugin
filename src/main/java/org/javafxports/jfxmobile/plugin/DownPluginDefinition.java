@@ -118,6 +118,7 @@ public class DownPluginDefinition implements Named {
 
     public enum DownPlugin {
         ACCELEROMETER,
+        AUDIO_RECORDING(true /* desktopSupported */),
         BARCODE_SCAN,
         BATTERY,
         BLE,
@@ -138,9 +139,11 @@ public class DownPluginDefinition implements Named {
         PUSH_NOTIFICATIONS,
         RUNTIME_ARGS(true /* desktopSupported */),
         SETTINGS(true /* desktopSupported */),
+        SHARE,
         STATUSBAR,
         STORAGE(true /* desktopSupported */),
-        VIBRATION;
+        VIBRATION,
+        VIDEO;
 
         private boolean androidSupported = true;
         private boolean iosSupported = true;
