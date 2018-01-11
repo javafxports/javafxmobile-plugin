@@ -32,12 +32,12 @@
 package org.javafxports.jfxmobile.plugin.android.task
 
 import com.android.build.gradle.internal.LoggerWrapper
-import com.android.builder.core.DefaultApiVersion
 import com.android.builder.internal.InstallUtils
 import com.android.builder.testing.ConnectedDeviceProvider
 import com.android.builder.testing.api.DeviceConnector
 import com.android.builder.testing.api.DeviceProvider
 import com.android.ddmlib.IDevice
+import com.android.sdklib.AndroidVersion
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.InputFile
@@ -62,19 +62,19 @@ class Install extends DefaultTask {
         boolean preview = project.jfxmobile.android.preview
         LoggerWrapper loggerWrapper = new LoggerWrapper(project.logger)
 
-        DeviceProvider deviceProvider = new ConnectedDeviceProvider(getAdbExe())
+        DeviceProvider deviceProvider = new ConnectedDeviceProvider(getAdbExe(), getTimeOut(), loggerWrapper)
         deviceProvider.init()
 
         boolean successFull = false
         for (DeviceConnector device : deviceProvider.getDevices()) {
             if (device.getState() != IDevice.DeviceState.UNAUTHORIZED) {
-                if (preview || (device.getApiLevel()== 0) || InstallUtils.checkDeviceApiLevel(device, new DefaultApiVersion(1, null), loggerWrapper, project.name, 'debug')) {
+                if (preview || (device.getApiLevel()== 0) || InstallUtils.checkDeviceApiLevel(device, AndroidVersion.DEFAULT, loggerWrapper, project.name, 'debug')) {
                     if (getApk() != null) {
                         if (preview || (device.getApiLevel()== 0) || device.getApiLevel() >= 21) {
-                            device.installPackages([ getApk() ], getTimeOut(), loggerWrapper)
+                            device.installPackages([ getApk() ], Collections.emptyList(), getTimeOut(), loggerWrapper)
                             successFull = true
                         } else {
-                            device.installPackage(getApk(), getTimeOut(), loggerWrapper)
+                            device.installPackage(getApk(), Collections.emptyList(), getTimeOut(), loggerWrapper)
                             successFull = true
                         }
                     } else {

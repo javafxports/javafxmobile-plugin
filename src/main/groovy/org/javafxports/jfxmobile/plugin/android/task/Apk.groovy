@@ -55,8 +55,8 @@ class Apk extends DefaultTask {
     @InputFile
     File resourceFile
 
-    @InputFile
-    File dexFile
+    @InputDirectory
+    File dexDirectory
 
     @InputFiles
     Collection<File> dexedLibraries
@@ -96,7 +96,14 @@ class Apk extends DefaultTask {
         }
 
         ApkBuilder apkBuilder = new ApkBuilder(getOutputFile().absolutePath, getResourceFile().absolutePath,
-                getDexFile().absolutePath, certificateInfo.key, certificateInfo.certificate, null)
+                null, certificateInfo.key, certificateInfo.certificate, null)
+
+        getDexDirectory().listFiles().findAll {
+            it.name.endsWith(".dex")
+        }.each {
+            apkBuilder.addFile(it, it.name)
+        }
+
         if (getMainResourcesDirectory() != null) {
             apkBuilder.addSourceFolder(getMainResourcesDirectory())
         }

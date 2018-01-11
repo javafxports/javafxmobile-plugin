@@ -68,6 +68,7 @@ import org.javafxports.jfxmobile.plugin.android.task.ProcessResources
 import org.javafxports.jfxmobile.plugin.android.task.ValidateManifest
 import org.javafxports.jfxmobile.plugin.android.task.ValidateSigning
 import org.javafxports.jfxmobile.plugin.android.task.WriteDexInputListFile
+import org.javafxports.jfxmobile.plugin.android.task.ZipAlign
 import org.javafxports.jfxmobile.plugin.embedded.RemotePlatformConfiguration
 import org.javafxports.jfxmobile.plugin.embedded.task.CopyRemoteDir
 import org.javafxports.jfxmobile.plugin.embedded.task.RunEmbedded
@@ -480,7 +481,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         androidTasks.add(mergeAssetsTask)
 
         SigningConfig releaseSigningConfig = project.jfxmobile.android.signingConfig
-        Apk apkReleaseTask = createApkTasks('Release', releaseSigningConfig)
+        ZipAlign apkReleaseTask = createApkTasks('Release', releaseSigningConfig)
 
         DefaultTask androidReleaseTask = project.tasks.create("androidRelease", DefaultTask)
         androidReleaseTask.description("Generates a release Android apk containing the JavaFX application.")
@@ -495,7 +496,8 @@ class JFXMobilePlugin implements Plugin<Project> {
         } catch (AndroidLocation.AndroidLocationException e) {
             throw new BuildException("Failed to get default debug keystore location.", e);
         }
-        Apk apkDebugTask = createApkTasks('Debug', debugSigningConfig)
+
+        ZipAlign apkDebugTask = createApkTasks('Debug', debugSigningConfig)
 
         Install installDebugTask = project.tasks.create("androidInstall", Install)
         installDebugTask.description("Launch the application on a connected android device.")
@@ -504,14 +506,13 @@ class JFXMobilePlugin implements Plugin<Project> {
         installDebugTask.dependsOn apkDebugTask
         androidTasks.add(installDebugTask)
 
-
         DefaultTask androidDebugTask = project.tasks.create("android", DefaultTask)
         androidDebugTask.description("Generates a debug Android apk containing the JavaFX application.")
         androidDebugTask.dependsOn apkDebugTask
         androidTasks.add(androidDebugTask)
     }
 
-    private Apk createApkTasks(String variant, SigningConfig signingConfig) {
+    private ZipAlign createApkTasks(String variant, SigningConfig signingConfig) {
         ProcessResources processResourcesTask = project.tasks.create("processAndroidResources${variant}", ProcessResources)
         if ("Debug" == variant) {
             processResourcesTask.setDebuggable(true)
@@ -526,7 +527,7 @@ class JFXMobilePlugin implements Plugin<Project> {
 
         Apk apkTask = project.tasks.create("apk${variant}", Apk)
         apkTask.conventionMapping.map("resourceFile") { processResourcesTask.packageOutputFile }
-        apkTask.conventionMapping.map("dexFile") { project.file("${project.tasks.dex.outputDirectory}/classes.dex") }
+        apkTask.conventionMapping.map("dexDirectory") { project.file("${project.tasks.dex.outputDirectory}") }
         apkTask.conventionMapping.map("dexedLibraries") { Collections.<File> emptyList() }
         apkTask.conventionMapping.map("jniFolders") {
             project.files(
@@ -559,7 +560,14 @@ class JFXMobilePlugin implements Plugin<Project> {
             apkTask.dependsOn validateSigningTask
         }
 
-        return apkTask
+        ZipAlign zipAlignTask = project.tasks.create("zipalign${variant}", ZipAlign)
+        zipAlignTask.conventionMapping.map("inputFile") { apkTask.outputFile }
+        zipAlignTask.conventionMapping.map("outputFile") { project.file("${project.jfxmobile.android.installDirectory}/${project.name}.apk") }
+        zipAlignTask.conventionMapping.map("zipAlignExe") { project.file("${project.jfxmobile.android.buildToolsDir}/zipalign${platformExtension()}") }
+        zipAlignTask.dependsOn apkTask
+        androidTasks.add(zipAlignTask)
+
+        return zipAlignTask
     }
 
     private void createIosTasks() {
