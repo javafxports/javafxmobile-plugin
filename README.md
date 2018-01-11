@@ -1,4 +1,4 @@
-# javafxmobile-plugin #
+# javafxmobile-plugin [![Build Status](https://travis-ci.org/javafxports/javafxmobile-plugin.svg?branch=master)](https://travis-ci.org/javafxports/javafxmobile-plugin)
 
 The javafxmobile-plugin is a gradle plugin that unifies the building of JavaFX applications for three different target platforms:
 
