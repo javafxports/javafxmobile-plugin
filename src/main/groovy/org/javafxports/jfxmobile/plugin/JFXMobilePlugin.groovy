@@ -41,6 +41,7 @@ import com.android.prefs.AndroidLocation
 import com.android.repository.Revision
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -281,6 +282,9 @@ class JFXMobilePlugin implements Plugin<Project> {
                 classpath = project.sourceSets.desktop.runtimeClasspath
                 if (project.preloaderClassName != null && !project.preloaderClassName.empty) {
                     systemProperties('javafx.preloader' : project.preloaderClassName)
+                }
+                if (JavaVersion.current() == JavaVersion.VERSION_1_9) {
+                    jvmArgs += "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED"
                 }
             }
             project.tasks.jar {
