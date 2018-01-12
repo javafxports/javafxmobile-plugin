@@ -75,6 +75,8 @@ public class AndroidExtension {
     private String dalvikSdk;
     private File dalvikSdkLib;
 
+    private String retrolambdaVersion = "2.5.3";
+
     private String assetsDirectory = "src/android/assets";
     private String resDirectory = "src/android/res";
     private String nativeDirectory = "src/android/jniLibs";
@@ -255,6 +257,14 @@ public class AndroidExtension {
 
     public void setDalvikSdkLib(File dalvikSdkLib) {
         this.dalvikSdkLib = dalvikSdkLib;
+    }
+
+    public String getRetrolambdaVersion() {
+        return retrolambdaVersion;
+    }
+
+    public void setRetrolambdaVersion(String retrolambdaVersion) {
+        this.retrolambdaVersion = retrolambdaVersion;
     }
 
     public String getAssetsDirectory() {

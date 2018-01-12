@@ -65,6 +65,7 @@ import org.javafxports.jfxmobile.plugin.android.task.Install
 import org.javafxports.jfxmobile.plugin.android.task.MergeAssets
 import org.javafxports.jfxmobile.plugin.android.task.MergeResources
 import org.javafxports.jfxmobile.plugin.android.task.ProcessResources
+import org.javafxports.jfxmobile.plugin.android.task.Retrolambda
 import org.javafxports.jfxmobile.plugin.android.task.ValidateManifest
 import org.javafxports.jfxmobile.plugin.android.task.ValidateSigning
 import org.javafxports.jfxmobile.plugin.android.task.WriteDexInputListFile
@@ -86,6 +87,8 @@ import javax.inject.Inject
  * @author joeri
  */
 class JFXMobilePlugin implements Plugin<Project> {
+
+    private static RETROLAMBDA_COMPILE = 'net.orfjackal.retrolambda:retrolambda'
 
     private ObjectFactory objectFactory
     private ToolingModelBuilderRegistry registry
@@ -152,6 +155,8 @@ class JFXMobilePlugin implements Plugin<Project> {
         project.convention.plugins.'org.javafxports.jfxmobile' = pluginConvention
 
         project.configurations {
+            retrolambdaConfig
+
             compileNoRetrolambda
             runtimeNoRetrolambda {
                 extendsFrom compileNoRetrolambda
@@ -247,6 +252,7 @@ class JFXMobilePlugin implements Plugin<Project> {
 
             // configure android and ios dependencies
             project.dependencies {
+                retrolambdaConfig "${RETROLAMBDA_COMPILE}:${project.jfxmobile.android.retrolambdaVersion}"
                 androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
                     force = true
                 }
@@ -402,6 +408,14 @@ class JFXMobilePlugin implements Plugin<Project> {
         copyClassesForDesugar.dependsOn project.tasks.compileJava, project.tasks.compileAndroidJava
         androidTasks.add(copyClassesForDesugar)
 
+        Retrolambda retrolambdaTask = project.tasks.create("applyRetrolambda", Retrolambda)
+        retrolambdaTask.conventionMapping.map("classpath") { project.files(project.configurations.androidCompileNoRetrolambda, project.configurations.androidSdk) }
+        retrolambdaTask.retrolambdaInput = copyClassesForDesugar.destinationDir
+        retrolambdaTask.retrolambdaOutput = project.file("${project.jfxmobile.android.temporaryDirectory}/retrolambda/output")
+        retrolambdaTask.dependsOn copyClassesForDesugar
+        androidTasks.add(retrolambdaTask)
+
+/*
         AndroidTask<DesugarTask> desugarTask = project.jfxmobile.android.androidTaskRegistry.create(
                 project.jfxmobile.android.taskFactory,
                 new DesugarTask.ConfigAction(project.jfxmobile.android,
@@ -410,13 +424,16 @@ class JFXMobilePlugin implements Plugin<Project> {
                         project.file("${project.jfxmobile.android.temporaryDirectory}/desugar/output")))
         desugarTask.get(project.jfxmobile.android.taskFactory).dependsOn copyClassesForDesugar
         androidTasks.add(desugarTask.get(project.jfxmobile.android.taskFactory))
+*/
 
         Jar mergeClassesIntoJarTask = project.tasks.create("mergeClassesIntoJar", Jar)
         mergeClassesIntoJarTask.destinationDir = project.file("${project.jfxmobile.android.multidexOutputDirectory}")
         mergeClassesIntoJarTask.archiveName = 'allclasses.jar'
-        mergeClassesIntoJarTask.from desugarTask.get(project.jfxmobile.android.taskFactory).outputDir
+        mergeClassesIntoJarTask.from retrolambdaTask.retrolambdaOutput
+//        mergeClassesIntoJarTask.from desugarTask.get(project.jfxmobile.android.taskFactory).outputDir
         mergeClassesIntoJarTask.include '**/*.class'
-        mergeClassesIntoJarTask.dependsOn desugarTask.get(project.jfxmobile.android.taskFactory)
+        mergeClassesIntoJarTask.dependsOn retrolambdaTask
+//        mergeClassesIntoJarTask.dependsOn desugarTask.get(project.jfxmobile.android.taskFactory)
         androidTasks.add(mergeClassesIntoJarTask)
 
         ProGuardTask proguardComponentsTask = project.tasks.create("shrinkMultiDexComponents", ProGuardTask)
