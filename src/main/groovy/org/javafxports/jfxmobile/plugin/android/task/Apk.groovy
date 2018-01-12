@@ -35,7 +35,6 @@ import com.android.build.gradle.internal.dsl.PackagingOptions
 import com.android.build.gradle.internal.dsl.SigningConfig
 import com.android.ide.common.signing.CertificateInfo
 import com.android.ide.common.signing.KeystoreHelper
-import com.android.sdklib.build.ApkBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.InputDirectory
