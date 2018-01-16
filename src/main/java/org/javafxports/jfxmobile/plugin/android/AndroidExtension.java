@@ -37,6 +37,7 @@ import com.android.build.gradle.internal.LoggerWrapper;
 import com.android.build.gradle.internal.SdkHandler;
 import com.android.build.gradle.internal.TaskContainerAdaptor;
 import com.android.build.gradle.internal.TaskFactory;
+import com.android.build.gradle.internal.dsl.DexOptions;
 import com.android.build.gradle.internal.dsl.PackagingOptions;
 import com.android.build.gradle.internal.dsl.SigningConfig;
 import com.android.build.gradle.internal.process.GradleJavaProcessExecutor;
@@ -97,7 +98,7 @@ public class AndroidExtension {
 
     private SigningConfig signingConfig;
     private PackagingOptions packagingOptions;
-    private JFXMobileDexOptions dexOptions;
+    private DexOptions dexOptions;
 
     private SdkHandler sdkHandler;
     private AndroidBuilder androidBuilder;
@@ -111,7 +112,7 @@ public class AndroidExtension {
 
         this.signingConfig = project.getExtensions().create("signingConfig", SigningConfig.class, "signing");
         this.packagingOptions = project.getExtensions().create("packagingOptions", PackagingOptions.class);
-        this.dexOptions = project.getExtensions().create("dexOptions", JFXMobileDexOptions.class, extraModelInfo);
+        this.dexOptions = project.getExtensions().create("dexOptions", DexOptions.class, extraModelInfo);
 
         try {
             this.buildCache = FileCache.getInstanceWithMultiProcessLocking(new File(AndroidLocation.getFolder(), "build-cache"));
@@ -442,7 +443,7 @@ public class AndroidExtension {
         return packagingOptions;
     }
 
-    public JFXMobileDexOptions getDexOptions() {
+    public DexOptions getDexOptions() {
         return dexOptions;
     }
 

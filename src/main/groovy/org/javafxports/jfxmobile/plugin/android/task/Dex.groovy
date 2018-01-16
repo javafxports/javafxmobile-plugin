@@ -31,13 +31,13 @@
  */
 package org.javafxports.jfxmobile.plugin.android.task
 
+import com.android.build.gradle.internal.dsl.DexOptions
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.javafxports.jfxmobile.plugin.android.JFXMobileDexOptions
 
 /**
  *
@@ -46,7 +46,7 @@ import org.javafxports.jfxmobile.plugin.android.JFXMobileDexOptions
 class Dex extends DefaultTask {
 
     @Nested
-    JFXMobileDexOptions dexOptions
+    DexOptions dexOptions
 
     @InputFile
     File mainDexListFile

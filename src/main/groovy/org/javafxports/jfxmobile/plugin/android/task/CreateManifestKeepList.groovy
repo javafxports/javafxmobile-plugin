@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
 package org.javafxports.jfxmobile.plugin.android.task
 
+import com.android.build.gradle.internal.dsl.DexOptions
 import com.google.common.base.Charsets
 import com.google.common.io.Files
 import org.gradle.api.DefaultTask
@@ -26,7 +24,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.javafxports.jfxmobile.plugin.android.JFXMobileDexOptions
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 
@@ -36,7 +33,7 @@ import javax.xml.parsers.SAXParserFactory
 class CreateManifestKeepList extends DefaultTask {
 
     @Nested
-    JFXMobileDexOptions dexOptions
+    DexOptions dexOptions
 
     @InputFile
     File manifest
@@ -73,7 +70,7 @@ class CreateManifestKeepList extends DefaultTask {
 
             if (getProguardFile() != null) {
                 out.write('\n')
-                out.write(Files.toString(getProguardFile(), Charsets.UTF_8))
+                out.write(Files.asCharSource(getProguardFile(), Charsets.UTF_8).read())
             }
         } finally {
             out.close()
