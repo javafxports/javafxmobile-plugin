@@ -17,6 +17,9 @@
 package org.javafxports.jfxmobile.plugin.android.task;
 
 import com.android.SdkConstants;
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+import com.android.build.gradle.internal.dsl.PackagingOptions;
 import com.android.sdklib.build.ApkCreationException;
 import com.android.sdklib.build.DuplicateFileException;
 import com.android.sdklib.build.IArchiveBuilder;
@@ -25,6 +28,7 @@ import com.android.sdklib.internal.build.DebugKeyProvider;
 import com.android.sdklib.internal.build.DebugKeyProvider.IKeyGenOutput;
 import com.android.sdklib.internal.build.DebugKeyProvider.KeytoolException;
 import com.android.sdklib.internal.build.SignedJarBuilder.IZipEntryFilter;
+import com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,9 +40,11 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -94,6 +100,25 @@ public final class ApkBuilder implements IArchiveBuilder {
         private boolean mNativeLibsConflict = false;
         private File mInputFile;
 
+        private Set<String> mUsedPickFirsts = null;
+
+        @Nullable
+        private final PackagingOptions mPackagingOptions;
+
+        @NonNull
+        private final Set<String> mExcludes;
+        @NonNull
+        private final Set<String> mPickFirsts;
+
+        private JavaAndNativeResourceFilter(@Nullable PackagingOptions packagingOptions) {
+            mPackagingOptions = packagingOptions;
+
+            mExcludes = mPackagingOptions != null ? mPackagingOptions.getExcludes() :
+                    Collections.<String>emptySet();
+            mPickFirsts = mPackagingOptions != null ? mPackagingOptions.getPickFirsts() :
+                    Collections.<String>emptySet();
+        }
+
         @Override
         public boolean checkEntry(String archivePath) throws ZipAbortException {
             // split the path into segments.
@@ -102,6 +127,25 @@ public final class ApkBuilder implements IArchiveBuilder {
             // empty path? skip to next entry.
             if (segments.length == 0) {
                 return false;
+            }
+
+            //noinspection VariableNotUsedInsideIf
+            if (mPackagingOptions != null) {
+                if (mExcludes.contains(archivePath)) {
+                    return false;
+                }
+
+                if (mPickFirsts.contains(archivePath)) {
+                    if (mUsedPickFirsts == null) {
+                        mUsedPickFirsts = Sets.newHashSetWithExpectedSize(mPickFirsts.size());
+                    }
+
+                    if (mUsedPickFirsts.contains(archivePath)) {
+                        return false;
+                    } else {
+                        mUsedPickFirsts.add(archivePath);
+                    }
+                }
             }
 
             // Check each folders to make sure they should be included.
@@ -169,7 +213,7 @@ public final class ApkBuilder implements IArchiveBuilder {
     private boolean mIsSealed = false;
 
     private final NullZipFilter mNullFilter = new NullZipFilter();
-    private final JavaAndNativeResourceFilter mFilter = new JavaAndNativeResourceFilter();
+    private final JavaAndNativeResourceFilter mFilter;
     private final HashMap<String, File> mAddedFiles = new HashMap<String, File>();
 
     /**
@@ -332,11 +376,12 @@ public final class ApkBuilder implements IArchiveBuilder {
      * @throws ApkCreationException
      */
     public ApkBuilder(String apkOsPath, String resOsPath, String dexOsPath, String storeOsPath,
-            PrintStream verboseStream) throws ApkCreationException {
+            PackagingOptions packagingOptions, PrintStream verboseStream) throws ApkCreationException {
         this(new File(apkOsPath),
              new File(resOsPath),
              dexOsPath != null ? new File(dexOsPath) : null,
              storeOsPath,
+             packagingOptions,
              verboseStream);
     }
 
@@ -361,11 +406,12 @@ public final class ApkBuilder implements IArchiveBuilder {
      * @throws ApkCreationException
      */
     public ApkBuilder(String apkOsPath, String resOsPath, String dexOsPath, PrivateKey key,
-            X509Certificate certificate, PrintStream verboseStream) throws ApkCreationException {
+                      X509Certificate certificate, PackagingOptions packagingOptions,
+                      PrintStream verboseStream) throws ApkCreationException {
         this(new File(apkOsPath),
              new File(resOsPath),
              dexOsPath != null ? new File(dexOsPath) : null,
-             key, certificate,
+             key, certificate, packagingOptions,
              verboseStream);
     }
 
@@ -390,7 +436,8 @@ public final class ApkBuilder implements IArchiveBuilder {
      * @throws ApkCreationException
      */
     public ApkBuilder(File apkFile, File resFile, File dexFile, String debugStoreOsPath,
-            final PrintStream verboseStream) throws ApkCreationException {
+            PackagingOptions packagingOptions, final PrintStream verboseStream) throws ApkCreationException {
+        mFilter = new JavaAndNativeResourceFilter(packagingOptions);
 
         SigningInfo info = getDebugKey(debugStoreOsPath, verboseStream);
         if (info != null) {
@@ -416,12 +463,15 @@ public final class ApkBuilder implements IArchiveBuilder {
      * @param dexFile the file representing the dex file. This can be null for apk with no code.
      * @param key the private key used to sign the package. Can be null.
      * @param certificate the certificate used to sign the package. Can be null.
+     * @param packagingOptions
      * @param verboseStream the stream to which verbose output should go. If null, verbose mode
      *                      is not enabled.
      * @throws ApkCreationException
      */
     public ApkBuilder(File apkFile, File resFile, File dexFile, PrivateKey key,
-            X509Certificate certificate, PrintStream verboseStream) throws ApkCreationException {
+            X509Certificate certificate, PackagingOptions packagingOptions, PrintStream verboseStream) throws ApkCreationException {
+        mFilter = new JavaAndNativeResourceFilter(packagingOptions);
+
         init(apkFile, resFile, dexFile, key, certificate, verboseStream);
     }
 
@@ -429,9 +479,9 @@ public final class ApkBuilder implements IArchiveBuilder {
     /**
      * Constructor init method.
      *
-     * @see #ApkBuilder(File, File, File, String, PrintStream)
-     * @see #ApkBuilder(String, String, String, String, PrintStream)
-     * @see #ApkBuilder(File, File, File, PrivateKey, X509Certificate, PrintStream)
+     * @see #ApkBuilder(File, File, File, String, PackagingOptions, PrintStream)
+     * @see #ApkBuilder(String, String, String, String, PackagingOptions, PrintStream)
+     * @see #ApkBuilder(File, File, File, PrivateKey, X509Certificate, PackagingOptions, PrintStream)
      */
     private void init(File apkFile, File resFile, File dexFile, PrivateKey key,
             X509Certificate certificate, PrintStream verboseStream) throws ApkCreationException {

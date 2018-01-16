@@ -95,7 +95,7 @@ class Apk extends DefaultTask {
         }
 
         ApkBuilder apkBuilder = new ApkBuilder(getOutputFile().absolutePath, getResourceFile().absolutePath,
-                null, certificateInfo.key, certificateInfo.certificate, null)
+                null, certificateInfo.key, certificateInfo.certificate, getPackagingOptions(), null)
 
         getDexDirectory().listFiles().findAll {
             it.name.endsWith(".dex")
