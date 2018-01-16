@@ -81,7 +81,7 @@ class Dex extends DefaultTask {
                 arg(value: "--num-threads=${getDexOptions().threadCount}")
             }
             if (getDexOptions().jumboMode) {
-                args(value: "--force-jumbo")
+                arg(value: "--force-jumbo")
             }
             getDexOptions().additionalParameters.each {
                 arg(value: it)
