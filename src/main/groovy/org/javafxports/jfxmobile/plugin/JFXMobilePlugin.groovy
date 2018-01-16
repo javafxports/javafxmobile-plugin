@@ -332,10 +332,10 @@ class JFXMobilePlugin implements Plugin<Project> {
                 }
 
                 // configure android boot classpath
-                def androidBootclasspath = project.configurations.androidBootclasspath.asPath
+                def androidBootclasspath = project.configurations.androidBootclasspath
                 if (!androidBootclasspath.empty) {
                     project.tasks.compileAndroidJava {
-                        options.bootClasspath = androidBootclasspath
+                        options.bootstrapClasspath = androidBootclasspath
                     }
                 }
 
@@ -364,7 +364,7 @@ class JFXMobilePlugin implements Plugin<Project> {
             if (iosTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
                 // configure ios boot classpath
                 project.tasks.compileIosJava {
-                    options.bootClasspath = project.configurations.iosBootclasspath.asPath
+                    options.bootstrapClasspath = project.configurations.iosBootclasspath
                 }
 
                 // NOTE: from is set after all configuration for iosRuntime has completed
