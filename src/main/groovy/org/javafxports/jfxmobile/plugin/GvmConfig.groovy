@@ -32,6 +32,7 @@
 package org.javafxports.jfxmobile.plugin
 
 import org.gradle.api.Project
+import org.javafxports.jfxmobile.plugin.ios.IosExtension
 
 
 /**
@@ -39,7 +40,7 @@ import org.gradle.api.Project
  */
 class GvmConfig {
 
-    final String  rootDirName
+    final String rootDirName
     final String appName
     final String mainClassName
     final String launchDir
@@ -47,9 +48,11 @@ class GvmConfig {
     final String[]     forcelinkClasses
     final List<String> jarDependecies
 
+    final IosExtension ios
+
     GvmConfig( Project project ) {
 
-        Map<String, ?> projectProps = project.getProperties();
+        Map<String, ?> projectProps = project.getProperties()
 
         jarDependecies = project.configurations
                                 .getByName("iosRuntime")
@@ -61,8 +64,9 @@ class GvmConfig {
         appName          = project.getName()
         mainClassName    = (String) projectProps.get("mainClassName")
         forcelinkClasses = project.jfxmobile.ios.forceLinkClasses as String[]
-        launchDir        = rootDirName + "/build/gvm/" + appName + ".app";
+        launchDir        = rootDirName + "/build/gvm/" + appName + ".app"
 
+        ios              = project.jfxmobile.ios
     }
 
 

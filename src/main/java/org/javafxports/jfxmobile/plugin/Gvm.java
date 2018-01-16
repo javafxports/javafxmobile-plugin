@@ -33,10 +33,8 @@ package org.javafxports.jfxmobile.plugin;
 
 import com.gluonhq.gvmbuild.BosonAppBuilder;
 import org.gradle.api.Project;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
-import org.javafxports.jfxmobile.plugin.ios.IosExtension;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,7 +61,6 @@ public class Gvm {
             classes.addAll(iosSourceSet.getOutput().getClassesDirs().getFiles());
             resources.add(iosSourceSet.getOutput().getResourcesDir());
         }
-        
 
         String logLevelName = "info";
         if (project.hasProperty("gvmlog")) {
@@ -81,22 +78,29 @@ public class Gvm {
                     .appName(config.getAppName())
                     .logLevel(logLevelName)
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
-                    .jarDependencies( config.getJarDependecies());
-            String tempDir =  project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getTemporaryDirectory().getAbsolutePath();
-            String nativeLibDir =  project.getExtensions().findByType(JFXMobileExtension.class).getIosExtension().getNativeDirectory();
+                    .jarDependencies(config.getJarDependecies());
 
             List<String> nativeLibs = new ArrayList<>();
 
-            File nativeDir = new File(nativeLibDir);
+            String nativeLibDir = config.getIos().getNativeDirectory();
+            File nativeDir = project.file(nativeLibDir);
+            project.getLogger().debug("Adding native libs from " + nativeDir.getAbsolutePath());
             if (nativeDir.exists() && nativeDir.isDirectory()) {
-                for (File nativeLib:   nativeDir.listFiles()) {
-                    nativeLibs.add(nativeLib.getAbsolutePath());
+                File[] nativeFiles = nativeDir.listFiles();
+                if (nativeFiles != null) {
+                    for (File nativeFile : nativeFiles) {
+                        nativeLibs.add(nativeFile.getAbsolutePath());
+                    }
                 }
             }
-            File nativeTmpDir = new File(tempDir, "native");
+            File nativeTmpDir = new File(config.getIos().getTemporaryDirectory(), "native");
+            project.getLogger().debug("Adding native libs from " + nativeTmpDir.getAbsolutePath());
             if (nativeTmpDir.exists()) {
-                for (File nativeLib:   nativeTmpDir.listFiles()) {
-                    nativeLibs.add(nativeLib.getAbsolutePath());
+                File[] nativeFiles = nativeTmpDir.listFiles();
+                if (nativeFiles != null) {
+                    for (File nativeFile : nativeFiles) {
+                        nativeLibs.add(nativeFile.getAbsolutePath());
+                    }
                 }
             }
             appBuilder.nativeLibs(nativeLibs);
