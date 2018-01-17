@@ -35,6 +35,7 @@ import com.android.build.gradle.internal.dsl.PackagingOptions
 import com.android.build.gradle.internal.dsl.SigningConfig
 import com.android.ide.common.signing.CertificateInfo
 import com.android.ide.common.signing.KeystoreHelper
+import com.android.sdklib.build.DuplicateFileException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.InputDirectory
@@ -94,39 +95,43 @@ class Apk extends DefaultTask {
             throw new GradleException("You need to configure a valid signingConfig when releasing an APK.")
         }
 
-        ApkBuilder apkBuilder = new ApkBuilder(getOutputFile().absolutePath, getResourceFile().absolutePath,
-                null, certificateInfo.key, certificateInfo.certificate, getPackagingOptions(), null)
+        try {
+            ApkBuilder apkBuilder = new ApkBuilder(getOutputFile().absolutePath, getResourceFile().absolutePath,
+                    null, certificateInfo.key, certificateInfo.certificate, getPackagingOptions(), null)
 
-        getDexDirectory().listFiles().findAll {
-            it.name.endsWith(".dex")
-        }.each {
-            apkBuilder.addFile(it, it.name)
-        }
+            getDexDirectory().listFiles().findAll {
+                it.name.endsWith(".dex")
+            }.each {
+                apkBuilder.addFile(it, it.name)
+            }
 
-        if (getMainResourcesDirectory() != null) {
-            apkBuilder.addSourceFolder(getMainResourcesDirectory())
-        }
-        if (getAndroidResourcesDirectory() != null) {
-            apkBuilder.addSourceFolder(getAndroidResourcesDirectory())
-        }
+            if (getMainResourcesDirectory() != null) {
+                apkBuilder.addSourceFolder(getMainResourcesDirectory())
+            }
+            if (getAndroidResourcesDirectory() != null) {
+                apkBuilder.addSourceFolder(getAndroidResourcesDirectory())
+            }
 
-        // add resources for all jar dependencies, except for android platform's android.jar
-        project.configurations.androidRuntime.filter {
-            it.name.endsWith('.jar') && !it.name.endsWith('android.jar')
-        }.each() {
-            project.logger.info("apk: adding ${it} to packager.addResourcesFromJar()")
-            apkBuilder.addResourcesFromJar(project.file(it))
-        }
+            // add resources for all jar dependencies, except for android platform's android.jar
+            project.configurations.androidRuntime.filter {
+                it.name.endsWith('.jar') && !it.name.endsWith('android.jar')
+            }.each() {
+                project.logger.info("apk: adding ${it} to packager.addResourcesFromJar()")
+                apkBuilder.addResourcesFromJar(project.file(it))
+            }
 
-        if (getJniFolders() != null) {
-            getJniFolders().each {
-                if (it.isDirectory()) {
-                    apkBuilder.addNativeLibraries(it)
+            if (getJniFolders() != null) {
+                getJniFolders().each {
+                    if (it.isDirectory()) {
+                        apkBuilder.addNativeLibraries(it)
+                    }
                 }
             }
-        }
 
-        apkBuilder.sealApk()
+            apkBuilder.sealApk()
+        } catch (DuplicateFileException e) {
+            throw new GradleException(e.getMessage() + ": ${e.archivePath}\nFile 1: ${e.file1}\nFile 2: ${e.file2}")
+        }
     }
 
 }
