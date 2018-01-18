@@ -1,7 +1,82 @@
-# javafxmobile-plugin [![Build Status](https://travis-ci.org/javafxports/javafxmobile-plugin.svg?branch=master)](https://travis-ci.org/javafxports/javafxmobile-plugin)
+# javafxmobile-plugin [![Build Status](https://travis-ci.org/javafxports/javafxmobile-plugin.svg?branch=master)](https://travis-ci.org/javafxports/javafxmobile-plugin) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.javafxports/jfxmobile-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.javafxports/jfxmobile-plugin)
 
-The javafxmobile-plugin is a gradle plugin that unifies the building of JavaFX applications for three different target platforms:
+The javafxmobile-plugin is a gradle plugin that unifies the building of Java and JavaFX
+applications for different target platforms:
 
 * desktop
 * android
 * ios
+
+## Getting started
+
+The easiest way to get started is by using the Gluon IDE plugin for your IDE:
+
+* [NetBeans](http://plugins.netbeans.org/plugin/57602/gluon-plugin)
+* [IntelliJ IDEA](https://plugins.jetbrains.com/plugin/7864-gluon-plugin)
+* [Eclipse](https://marketplace.eclipse.org/content/gluon-plugin)
+
+Once the IDE plugin is installed, you can create a new Gluon Mobile project.
+
+## Prerequisites
+
+### General
+
+Building your project can be done with either either Java 8 or Java 9. When you use Java 9,
+make sure to set the source and target compatibility to Java 8 to make your applications
+deployable on Android.
+
+```
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+```
+
+### Android
+
+1. The Android SDK command line tools, available [here](https://developer.android.com/studio/index.html#command-tools)
+2. Use the `sdkmanager` commandline tool to install the following packages:
+
+    ```
+    ANDROID_SDK/tools/bin/sdkmanager "platform-tools" "build-tools;27.0.3" "platforms;android-25" "extras;android;m2repository" "extras;google;m2repository"
+    ```
+
+3. Define a global gradle property named ANDROID_HOME inside ~/.gradle/gradle.properties that
+points to the location of the Android SDK:
+
+    ```
+    ANDROID_HOME=/path/to/android-sdk-directory
+    ```
+
+### iOS
+
+1. A Mac with MacOS X 10.13.2 or superior
+2. Xcode 9.2 or superior, available from the Mac App Store
+
+## Usage
+
+If you create your project without the use of the IDE plugins, add the following to your
+`build.gradle`:
+
+```
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        maven {
+            url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
+        }
+    }
+    dependencies {
+        classpath 'org.javafxports:jfxmobile-plugin:2.0.0'
+    }
+}
+
+apply plugin: 'org.javafxports.jfxmobile'
+```
+
+## Java 9
+
+Full Java 9 support is in an experimental phase and is currently only supported on iOS.
+
+## License
+
+This project is licensed under the [3-Clause BSD license](https://opensource.org/licenses/BSD-3-Clause).
