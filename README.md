@@ -50,6 +50,17 @@ points to the location of the Android SDK:
 
 1. A Mac with MacOS X 10.13.2 or superior
 2. Xcode 9.2 or superior, available from the Mac App Store
+3. The `usbmuxd` library, a cross-platform software library that talks the protocols to support iOS devices, is required. Install it with the use of [Homebrew](https://brew.sh):
+
+    ```
+    brew install usbmuxd
+    ``` 
+
+4. It is highly recommended to increase the Java stack size, by adding the following option to the `~/.gradle/gradle.properties` file:
+ 
+    ```
+    org.gradle.jvmargs=-Xms256m -Xmx4096m -Xss2m
+    ```
 
 ## Usage
 
