@@ -50,7 +50,7 @@ points to the location of the Android SDK:
 
 1. A Mac with MacOS X 10.13.2 or superior
 2. Xcode 9.2 or superior, available from the Mac App Store
-3. The `usbmuxd` library, a cross-platform software library that talks the protocols to support iOS devices, is required. Install it with the use of [Homebrew](https://brew.sh):
+3. To deploy on an iOS device, the `usbmuxd` library, a cross-platform software library that talks the protocols to support iOS devices. Install it with the use of [Homebrew](https://brew.sh):
 
     ```
     brew install usbmuxd
