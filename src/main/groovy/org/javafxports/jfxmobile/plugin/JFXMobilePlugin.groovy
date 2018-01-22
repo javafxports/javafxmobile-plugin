@@ -120,6 +120,10 @@ class JFXMobilePlugin implements Plugin<Project> {
             throw new GradleException("You are using Gradle ${project.gradle.gradleVersion} but we require version 4.2 or higher")
         }
 
+        if (JavaVersion.current() != JavaVersion.VERSION_1_9) {
+            throw new GradleException("Gluon VM requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + ", but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
+        }
+
         project.plugins.apply JavaPlugin
         project.plugins.apply ApplicationPlugin
         project.sourceSets {
@@ -283,9 +287,7 @@ class JFXMobilePlugin implements Plugin<Project> {
                 if (project.preloaderClassName != null && !project.preloaderClassName.empty) {
                     systemProperties('javafx.preloader' : project.preloaderClassName)
                 }
-                if (JavaVersion.current() == JavaVersion.VERSION_1_9) {
-                    jvmArgs += "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED"
-                }
+                jvmArgs += "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED"
             }
             project.tasks.jar {
                 from project.sourceSets.desktop.output

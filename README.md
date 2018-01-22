@@ -21,9 +21,8 @@ Once the IDE plugin is installed, you can create a new Gluon Mobile project.
 
 ### General
 
-Building your project can be done with either either Java 8 or Java 9. When you use Java 9,
-make sure to set the source and target compatibility to Java 8 to make your applications
-deployable on Android.
+Building your project requires Java 9. Make sure to set the source and target compatibility
+to Java 8 to make your applications deployable on Android.
 
 ```
 sourceCompatibility = 1.8
@@ -33,7 +32,7 @@ targetCompatibility = 1.8
 ### Android
 
 1. The Android SDK command line tools, available [here](https://developer.android.com/studio/index.html#command-tools)
-2. Use the `sdkmanager` commandline tool to install the following packages:
+2. Use the `sdkmanager` command line tool to install the following packages:
 
     ```
     ANDROID_SDK/tools/bin/sdkmanager "platform-tools" "build-tools;27.0.3" "platforms;android-25" "extras;android;m2repository" "extras;google;m2repository"
