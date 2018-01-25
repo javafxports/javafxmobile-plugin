@@ -66,6 +66,7 @@ import org.javafxports.jfxmobile.plugin.android.task.Install
 import org.javafxports.jfxmobile.plugin.android.task.MergeAssets
 import org.javafxports.jfxmobile.plugin.android.task.MergeResources
 import org.javafxports.jfxmobile.plugin.android.task.ProcessResources
+import org.javafxports.jfxmobile.plugin.android.task.Retrobuffer
 import org.javafxports.jfxmobile.plugin.android.task.Retrolambda
 import org.javafxports.jfxmobile.plugin.android.task.ValidateManifest
 import org.javafxports.jfxmobile.plugin.android.task.ValidateSigning
@@ -414,11 +415,18 @@ class JFXMobilePlugin implements Plugin<Project> {
         copyClassesForDesugar.dependsOn project.tasks.compileJava, project.tasks.compileAndroidJava
         androidTasks.add(copyClassesForDesugar)
 
+        Retrobuffer retrobufferTask = project.tasks.create("applyRetrobuffer", Retrobuffer)
+        retrobufferTask.conventionMapping.map("classpath") { project.files(project.configurations.androidCompile, project.configurations.androidSdk) }
+        retrobufferTask.retrobufferInput = copyClassesForDesugar.destinationDir
+        retrobufferTask.retrobufferOutput = project.file("${project.jfxmobile.android.temporaryDirectory}/retrobuffer/output")
+        retrobufferTask.dependsOn copyClassesForDesugar
+        androidTasks.add(retrobufferTask)
+
         Retrolambda retrolambdaTask = project.tasks.create("applyRetrolambda", Retrolambda)
         retrolambdaTask.conventionMapping.map("classpath") { project.files(project.configurations.androidCompileNoRetrolambda, project.configurations.androidSdk) }
-        retrolambdaTask.retrolambdaInput = copyClassesForDesugar.destinationDir
+        retrolambdaTask.retrolambdaInput = retrobufferTask.retrobufferOutput
         retrolambdaTask.retrolambdaOutput = project.file("${project.jfxmobile.android.temporaryDirectory}/retrolambda/output")
-        retrolambdaTask.dependsOn copyClassesForDesugar
+        retrolambdaTask.dependsOn retrobufferTask
         androidTasks.add(retrolambdaTask)
 
 /*
