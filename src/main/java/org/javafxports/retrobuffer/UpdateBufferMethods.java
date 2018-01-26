@@ -85,7 +85,7 @@ public class UpdateBufferMethods extends ClassVisitor {
                     MethodInstruction lookup = new MethodInstruction(owner, name, desc);
                     if (methodInstructions.contains(lookup)) {
                         LOG.log(Level.INFO, "Transforming java.nio.Buffer invocation in " + methodOwner + "." + methodName + ": " + owner + "." + name + " " + desc);
-                        super.visitMethodInsn(opcode, "java/nio/Buffer", name, desc.substring(0, desc.indexOf("L") + 1) + "java/nio/Buffer;", itf);
+                        super.visitMethodInsn(opcode, owner, name, desc.substring(0, desc.indexOf("L") + 1) + "java/nio/Buffer;", itf);
                     } else {
                         super.visitMethodInsn(opcode, owner, name, desc, itf);
                     }
