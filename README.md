@@ -69,6 +69,9 @@ points to the location of the Android SDK:
     org.gradle.jvmargs=-Xms256m -Xmx4096m -Xss2m
     ```
 
+Be aware that the first time the plugin runs an iOS task, it will take a long time (more than 15 minutes) to ahead-of-time compile all the Java modules. 
+After this finishes successfully, all these modules are cached locally (`~/.gvm/aot`), so the next runs will be shorter (just a few minutes).
+
 ## Usage
 
 If you create your project without the use of the IDE plugins, add the following to your
