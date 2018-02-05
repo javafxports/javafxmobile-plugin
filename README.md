@@ -112,10 +112,6 @@ buildscript {
 apply plugin: 'org.javafxports.jfxmobile'
 ```
 
-## Java 9
-
-Full Java 9 support is in an experimental phase and is currently only supported on iOS.
-
 ## License
 
 This project is licensed under the [3-Clause BSD license](https://opensource.org/licenses/BSD-3-Clause).
