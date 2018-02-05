@@ -65,7 +65,7 @@ After this finishes successfully, all these modules are cached locally (`~/.gvm/
 
 ### Android
 
-**Note!** Be aware that Java 9 support on Android is not supported. If you use version 2 of
+**Note!** Be aware that Java 9 APIs on Android are not supported. If you use version 2 of
 javafxmobile-plugin, you must make sure that you don't use any new Java 9 APIs.
 
 1. The Android SDK command line tools, available [here](https://developer.android.com/studio/index.html#command-tools)
