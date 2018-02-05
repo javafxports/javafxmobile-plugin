@@ -9,6 +9,8 @@ applications for different target platforms:
 
 ## Getting started
 
+### IDE plugin
+
 The easiest way to get started is by using the Gluon IDE plugin for your IDE:
 
 * [NetBeans](http://plugins.netbeans.org/plugin/57602/gluon-plugin)
@@ -16,6 +18,12 @@ The easiest way to get started is by using the Gluon IDE plugin for your IDE:
 * [Eclipse](https://marketplace.eclipse.org/content/gluon-plugin)
 
 Once the IDE plugin is installed, you can create a new Gluon Mobile project.
+
+### Sample
+
+A complete basic sample is also available from the Gluon samples repository:
+
+https://github.com/gluonhq/gluon-samples/tree/master/singleview-gluonvm
 
 ## Prerequisites
 
