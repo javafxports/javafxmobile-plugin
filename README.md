@@ -12,18 +12,12 @@ applications for different target platforms:
 [javafxmobile-plugin version 1.x](https://bitbucket.org/javafxports/javafxmobile-plugin) brought
 Java 8 to mobile development. Version 2.x is an upgrade of the plugin that enables Java 9
 development by leveraging [Gluon VM](https://gluonhq.com/products/mobile/vm/). Gluon VM is
-Gluon's custom developed Java virtual machine that specifically targets mobile devices. It is
-still in active development and is at the moment only supported on iOS devices.
+Gluon's custom developed Java virtual machine that specifically targets mobile devices.
 
-The compatibility matrix below can help you in deciding if you should use version 1 or 2 of the
-plugin.
-
-Platform | JDK | Plugin
--------- | --- | -------
-iOS | 8 | 1
-Android | 8 | 1
-iOS | 9 | 2
-Android | 9 | 2 (very experimental <sup>[1](#fn1)</sup>)
+**Note!** Gluon VM is still in active development and is at the moment only supported on
+iOS devices. If you want to develop an application for production, please use the
+[stable 1.x version](https://bitbucket.org/javafxports/javafxmobile-plugin). If you want to
+experiment with Java 9 features, please use the new 2.x version. 
 
 ## Getting started
 
@@ -71,11 +65,8 @@ After this finishes successfully, all these modules are cached locally (`~/.gvm/
 
 ### Android
 
-<b name="fn1">Experimental!</b>
-
-Be aware that Java 9 support on Android is very experimental. You can only use Java 9 APIs as
-long as you remain backward compatible with Java 8. For instance, you can not use custom skins
-of JavaFX controls, because those APIs were changed completely in JavaFX 9.
+**Note!** Be aware that Java 9 support on Android is not supported. If you use version 2 of
+javafxmobile-plugin, you must make sure that you don't use any new Java 9 APIs.
 
 1. The Android SDK command line tools, available [here](https://developer.android.com/studio/index.html#command-tools)
 2. Use the `sdkmanager` command line tool to install the following packages:
