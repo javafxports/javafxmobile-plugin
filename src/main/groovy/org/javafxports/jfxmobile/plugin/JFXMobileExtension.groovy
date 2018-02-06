@@ -47,7 +47,7 @@ import org.javafxports.jfxmobile.plugin.ios.IosExtension
 class JFXMobileExtension {
 
     String javacEncoding = 'utf-8'
-    String javafxportsVersion = "8.60.9"
+    String javafxportsVersion = "8.60.10"
 
     DownConfiguration downConfig
 
