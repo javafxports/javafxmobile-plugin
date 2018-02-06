@@ -110,6 +110,10 @@ buildscript {
 }
 
 apply plugin: 'org.javafxports.jfxmobile'
+
+repositories {
+    jcenter()
+}
 ```
 
 ## License
