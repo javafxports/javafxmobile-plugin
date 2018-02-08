@@ -53,7 +53,7 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile 'com.android.tools.build:gradle:3.0.1'
-    compile "com.gluonhq:gvmbuilder:0.0.10"
+    compile 'com.gluonhq:gvmbuilder:0.0.11'
     compile 'javax.activation:javax.activation-api:1.2.0'
     compile 'javax.xml.bind:jaxb-api:2.3.0'
     compile 'com.sun.xml.bind:jaxb-core:2.3.0'
@@ -86,6 +86,30 @@ task groovydocJar(type: Jar, dependsOn: groovydoc) {
 
 artifacts {
     archives sourceJar, groovydocJar
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    configurations = [ 'published', 'archives' ]
+    dryRun = !project.publish
+    publish = project.publish
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'The jfxmobile-plugin is a gradle plugin that unifies the building of JavaFX applications for three different target platforms: android, ios and desktop.'
+        websiteUrl = 'http://javafxports.org'
+        issueTrackerUrl = 'https://github.com/javafxports/javafxmobile-plugin/issues'
+        vcsUrl = 'https://github.com/javafxports/javafxmobile-plugin'
+        licenses = [ 'BSD 3-Clause' ]
+        labels = [ 'ios', 'android', 'mobile', 'javafx', 'desktop', 'gradle', 'plugin' ]
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [ 'gradle-plugin' : "org.javafxports.jfxmobile:${project.group}:${project.name}" ]
+        }
+    }
 }
 
 bintray {
