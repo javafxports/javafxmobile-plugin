@@ -36,6 +36,9 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 /**
  * Check if provided AndroidManifest.xml file exists if it is specified. When
  * it's not specified, create a default one.
@@ -55,7 +58,7 @@ class ValidateManifest extends DefaultTask {
                 throw new GradleException("Configured manifest file is invalid: ${project.jfxmobile.android.manifest}")
             }
 
-            java.nio.file.Files.copy(manifestFile.toPath(), getOutput().toPath())
+            Files.copy(manifestFile.toPath(), getOutput().toPath(), StandardCopyOption.REPLACE_EXISTING)
         } else {
             def projectVersion = project.version == 'unspecified' ? '1.0' : project.version
 
