@@ -57,8 +57,6 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 import java.io.File;
 import java.util.Collections;
 
-import static org.codehaus.groovy.runtime.ResourceGroovyMethods.deleteDir;
-
 public class AndroidExtension {
 
     private final Project project;
@@ -136,13 +134,9 @@ public class AndroidExtension {
         this.taskFactory = new TaskContainerAdaptor(project.getTasks());
 
         installDirectory = new File(project.getBuildDir(), "javafxports/android");
-        deleteDir(installDirectory);
-        installDirectory.mkdirs();
         project.getLogger().info("Android install directory: " + installDirectory);
 
         temporaryDirectory = new File(project.getBuildDir(), "javafxports/tmp/android");
-        deleteDir(temporaryDirectory);
-        temporaryDirectory.mkdirs();
         project.getLogger().info("Android temporary output directory: " + temporaryDirectory);
 
         resourcesDirectory = new File(temporaryDirectory, "resources");
