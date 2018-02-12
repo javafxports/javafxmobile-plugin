@@ -20,7 +20,7 @@ apply from: 'gradle/code-quality.gradle'
 apply from: 'gradle/mavenPublish.gradle'
 
 group = 'org.javafxports'
-version = '2.0.6'
+version = '2.1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
