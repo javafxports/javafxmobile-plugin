@@ -103,7 +103,9 @@ class JFXMobileConvention {
                 DependencyArtifact dependencyArtifact = moduleDependency.artifacts[0]
                 def localFile = downloadLatestSnapshotVersions(dependencyArtifact, moduleDependency,
                         'https://oss.sonatype.org/content/repositories/snapshots/')
-                return project.dependencies.create(project.files(localFile))
+                if (localFile != null) {
+                    return project.dependencies.create(project.files(localFile))
+                }
             }
         }
         return dependency
@@ -172,10 +174,17 @@ class JFXMobileConvention {
         def artifactFile = new File(localDependencyDir.toFile().absolutePath, artifactName)
         if (!artifactFile.exists() || artifactFile.lastModified() < (System.currentTimeMillis() - 3600 * 1000 * 24)) {
             def metadata = new XmlSlurper().parseText(metadataFile.getText('utf-8'))
-            def version = metadata.versioning.snapshotVersions.snapshotVersion.findAll { snapshot ->
+            def versions = metadata.versioning.snapshotVersions.snapshotVersion.findAll { snapshot ->
                 snapshot.classifier == artifact.classifier
-            }*.value[0]
+            }*.value
+            if (versions.isEmpty()) {
+                project.logger.warn("snapshotLocal() failed to detect latest snapshot version for " +
+                        "$dependency.group:$artifact.name:$dependency.version:$artifact.classifier" +
+                        " at repository $repository. Falling back to standard dependency behaviour.")
+                return null
+            }
 
+            def version = versions[0]
             def conn = (repository + "/" + dependency.group.replace(".", "/") + "/" + dependency.name
                     + "/" + dependency.version + "/" + artifact.name + "-" + version + (artifact.classifier == null ? '' : ('-' + artifact.classifier)) + '.' + artifact.extension).toURL().openConnection()
             conn.addRequestProperty('User-Agent', 'curl/7.29.0')
