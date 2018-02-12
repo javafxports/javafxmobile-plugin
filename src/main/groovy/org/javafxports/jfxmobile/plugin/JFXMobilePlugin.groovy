@@ -371,9 +371,9 @@ class JFXMobilePlugin implements Plugin<Project> {
                 }
 
                 // NOTE: from is set after all configuration for iosRuntime has completed
-                project.tasks.iosExtractNativeLibs.from {
-                    project.configurations.iosRuntime.collect { project.zipTree(it).matching { include 'native/*.a' }}
-                }
+//                project.tasks.iosExtractNativeLibs.from {
+//                    project.configurations.iosRuntime.collect { project.zipTree(it).matching { include 'native/*.a' }}
+//                }
             } else {
                 // ignore tasks for ios sourceSet
                 project.tasks.iosClasses.enabled = false
@@ -605,34 +605,34 @@ class JFXMobilePlugin implements Plugin<Project> {
         // NOTE: the from input is taken from the iosRuntime configuration, but can only be applied
         // when that configuration is completely configured. the from is applied above at a later
         // time after the project's taskGraph is ready
-        Sync extractNativeLibsTask = project.tasks.create("iosExtractNativeLibs", Sync) {
-            into project.file("${project.jfxmobile.ios.temporaryDirectory}")
-            include 'native/*.a'
-        }
+//        Sync extractNativeLibsTask = project.tasks.create("iosExtractNativeLibs", Sync) {
+//            into project.file("${project.jfxmobile.ios.temporaryDirectory}")
+//            include 'native/*.a'
+//        }
 
         IosInstall iosInstallTask = project.tasks.create("iosInstall", IosInstall)
         iosInstallTask.description = "Install the application on a connected ios device."
-        iosInstallTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
+        iosInstallTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(iosInstallTask)
         
         IosDevice iosDeviceTask = project.tasks.create("launchIOSDevice", IosDevice)
         iosDeviceTask.description = "Launch the application on a connected ios device."
-        iosDeviceTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
+        iosDeviceTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(iosDeviceTask)
 
         IosSimulator ipadSimulatorTask = project.tasks.create("launchIPadSimulator", IosSimulator)
         ipadSimulatorTask.description = "Launch the application on an iPad simulator."
-        ipadSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
+        ipadSimulatorTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(ipadSimulatorTask)
 
         IosSimulator iphoneSimulatorTask = project.tasks.create("launchIPhoneSimulator", IosSimulator)
         iphoneSimulatorTask.description = "Launch the application on an iPhone simulator."
-        iphoneSimulatorTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
+        iphoneSimulatorTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(iphoneSimulatorTask)
 
         CreateIpa createIpaTask = project.tasks.create("ios", CreateIpa)
         createIpaTask.description = "Generates an iOS ipa containing the JavaFX application."
-        createIpaTask.dependsOn([project.tasks.iosClasses, extractNativeLibsTask])
+        createIpaTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(createIpaTask)
     }
 
