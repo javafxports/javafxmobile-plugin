@@ -51,6 +51,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
@@ -394,6 +395,10 @@ class JFXMobilePlugin implements Plugin<Project> {
     }
 
     private void createAndroidTasks() {
+        Delete cleanAndroidTask = project.tasks.create("cleanAndroid", Delete) {
+            delete project.jfxmobile.android.temporaryDirectory, project.jfxmobile.android.installDirectory
+        }
+
         ValidateManifest validateManifestTask = project.tasks.create("validateManifest", ValidateManifest)
         validateManifestTask.conventionMapping.map("output") { project.file("${project.jfxmobile.android.temporaryDirectory}/AndroidManifest.xml") }
         androidTasks.add(validateManifestTask)
@@ -468,7 +473,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         File componentsJarFile = project.file("${project.jfxmobile.android.multidexOutputDirectory}/componentClasses.jar")
         proguardComponentsTask.outjars(componentsJarFile)
         proguardComponentsTask.printconfiguration("${project.jfxmobile.android.multidexOutputDirectory}/components.flags")
-        proguardComponentsTask.dependsOn manifestKeepListTask, mergeClassesIntoJarTask
+        proguardComponentsTask.dependsOn cleanAndroidTask, manifestKeepListTask, mergeClassesIntoJarTask
         androidTasks.add(proguardComponentsTask)
 
         CreateMainDexList createMainDexListTask = project.tasks.create("createMainDexList", CreateMainDexList)
