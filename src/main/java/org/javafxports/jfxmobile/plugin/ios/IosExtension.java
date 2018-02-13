@@ -41,6 +41,20 @@ import java.util.List;
 
 public class IosExtension {
 
+    /**
+     * @return the runtimeModules
+     */
+    public List<String> getRuntimeModules() {
+        return runtimeModules;
+    }
+
+    /**
+     * @param runtimeModules the runtimeModules to set
+     */
+    public void setRuntimeModules(List<String> runtimeModules) {
+        this.runtimeModules = runtimeModules;
+    }
+
     private final Project project;
 
     private String os = OS.ios.name();
@@ -48,6 +62,7 @@ public class IosExtension {
     private List<String> ipaArchs;
 
     private List<String> forceLinkClasses = new ArrayList<>();
+    private List<String> runtimeModules = new ArrayList<>();
 
     private File infoPList;
 

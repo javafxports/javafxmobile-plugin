@@ -46,6 +46,7 @@ class GvmConfig {
     final String launchDir
 
     final String[]     forcelinkClasses
+    final String[] runtimeModules;
     final List<String> jarDependecies
 
     final IosExtension ios
@@ -64,6 +65,7 @@ class GvmConfig {
         appName          = project.getName()
         mainClassName    = (String) projectProps.get("mainClassName")
         forcelinkClasses = project.jfxmobile.ios.forceLinkClasses as String[]
+        runtimeModules = project.jfxmobile.ios.runtimeModules as String[]
         launchDir        = rootDirName + "/build/gvm/" + appName + ".app"
 
         ios              = project.jfxmobile.ios
