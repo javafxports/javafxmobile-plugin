@@ -1,0 +1,3 @@
+This project uses libimobiledevice:
+https://github.com/libimobiledevice/libimobiledevice
+which is copyrighted under the GPL v2.0 license
