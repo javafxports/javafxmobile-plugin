@@ -191,7 +191,7 @@ class JFXMobileConvention {
             conn.addRequestProperty('Accept', '*/*')
             artifactFile.setBytes(conn.content.bytes)
 
-            println "Downloaded version $version of artifact '$dependency.group:$dependency.name:$dependency.version${artifact.classifier == null ? '' : (':' + artifact.classifier)}' to $artifactFile.absolutePath"
+            project.logger.info("Downloaded version $version of artifact '$dependency.group:$dependency.name:$dependency.version${artifact.classifier == null ? '' : (':' + artifact.classifier)}' to $artifactFile.absolutePath")
         }
 
         return artifactFile
