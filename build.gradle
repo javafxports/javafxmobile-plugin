@@ -112,31 +112,3 @@ bintray {
     }
 }
 
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-
-    configurations = [ 'published', 'archives' ]
-    dryRun = !project.publish
-    publish = project.publish
-    pkg {
-        repo = 'maven'
-        name = project.name
-        desc = 'The jfxmobile-plugin is a gradle plugin that unifies the building of JavaFX applications for three different target platforms: android, ios and desktop.'
-        websiteUrl = 'http://javafxports.org'
-        issueTrackerUrl = 'https://github.com/javafxports/javafxmobile-plugin/issues'
-        vcsUrl = 'https://github.com/javafxports/javafxmobile-plugin'
-        licenses = [ 'BSD 3-Clause' ]
-        labels = [ 'ios', 'android', 'mobile', 'javafx', 'desktop', 'gradle', 'plugin' ]
-        version {
-            name = project.version
-            vcsTag = project.version
-            attributes = [ 'gradle-plugin' : "org.javafxports.jfxmobile:${project.group}:${project.name}" ]
-        }
-    }
-}
-
-def getSetting(setting) {
-    project.hasProperty(setting) ? project.getProperty(setting) : System.getenv(setting)
-}
-

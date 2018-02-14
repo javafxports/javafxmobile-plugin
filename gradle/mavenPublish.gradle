@@ -54,9 +54,9 @@ private configurePOM(def pom) {
         modelVersion '4.0.0'
         packaging 'jar'
         scm {
-            connection 'scm:hg:https://bitbucket.org/javafxports/javafxmobile-plugin'
-            developerConnection 'scm:hg:https://bitbucket.org/javafxports/javafxmobile-plugin'
-            url 'https://bitbucket.org/javafxports/javafxmobile-plugin'
+            connection 'scm:git:https://github.com/javafxports/javafxmobile-plugin.git'
+            developerConnection 'scm:git:ssh://git@github.com:javafxports/javafxmobile-plugin.git'
+            url 'https://github.com/javafxports/javafxmobile-plugin'
         }
         developers {
             developer {
@@ -95,23 +95,23 @@ private configurePOM(def pom) {
 }
 
 private String getStringProperty(String name, String defaultValue) {
-    if (!hasProperty(name)) {
+    if (!project.hasProperty(name)) {
         return defaultValue
     }
 
-    def propertyValue = getProperty(name)
+    def propertyValue = project.property(name)
     return propertyValue != null ? propertyValue.toString().trim() : defaultValue
 }
 
 private String getStringPropertyDefaultAsProperty(String name, String defaultProperty) {
-    if (!hasProperty(name)) {
-        return hasProperty(defaultProperty) ? property(defaultProperty) : null
+    if (!project.hasProperty(name)) {
+        return project.hasProperty(defaultProperty) ? project.property(defaultProperty) : System.getenv(name)
     }
 
-    def propertyValue = property(name)
+    def propertyValue = project.property(name)
     if (propertyValue != null) {
         return propertyValue.toString().trim()
     } else {
-        return hasProperty(defaultProperty) ? property(defaultProperty) : null
+        return project.hasProperty(defaultProperty) ? project.property(defaultProperty) : System.getenv(name)
     }
 }
