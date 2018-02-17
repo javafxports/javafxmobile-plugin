@@ -42,6 +42,20 @@ import java.util.List;
 public class IosExtension {
 
     /**
+     * @return the ignoreNativeLibs
+     */
+    public List<String> getIgnoreNativeLibs() {
+        return ignoreNativeLibs;
+    }
+
+    /**
+     * @param ignoreNativeLibs the ignoreNativeLibs to set
+     */
+    public void setIgnoreNativeLibs(List<String> ignoreNativeLibs) {
+        this.ignoreNativeLibs = ignoreNativeLibs;
+    }
+
+    /**
      * @return the runtimeModules
      */
     public List<String> getRuntimeModules() {
@@ -62,6 +76,7 @@ public class IosExtension {
     private List<String> ipaArchs;
 
     private List<String> forceLinkClasses = new ArrayList<>();
+    private List<String> ignoreNativeLibs = new ArrayList<>();
     private List<String> runtimeModules = new ArrayList<>();
 
     private File infoPList;

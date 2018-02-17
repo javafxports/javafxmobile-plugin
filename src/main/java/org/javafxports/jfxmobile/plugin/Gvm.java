@@ -77,6 +77,7 @@ public class Gvm {
                     .appId(config.getMainClassName())
                     .appName(config.getAppName())
                     .logLevel(logLevelName)
+                    .ignoreNativeLibs(Arrays.asList(config.getIgnoreNativeLibs()))
                     .addRuntimeModules(Arrays.asList(config.getRuntimeModules()))
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
                     .jarDependencies(config.getJarDependecies());
