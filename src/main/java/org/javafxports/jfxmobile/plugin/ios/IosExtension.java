@@ -41,33 +41,6 @@ import java.util.List;
 
 public class IosExtension {
 
-    /**
-     * @return the ignoreNativeLibs
-     */
-    public List<String> getIgnoreNativeLibs() {
-        return ignoreNativeLibs;
-    }
-
-    /**
-     * @param ignoreNativeLibs the ignoreNativeLibs to set
-     */
-    public void setIgnoreNativeLibs(List<String> ignoreNativeLibs) {
-        this.ignoreNativeLibs = ignoreNativeLibs;
-    }
-
-    /**
-     * @return the runtimeModules
-     */
-    public List<String> getRuntimeModules() {
-        return runtimeModules;
-    }
-
-    /**
-     * @param runtimeModules the runtimeModules to set
-     */
-    public void setRuntimeModules(List<String> runtimeModules) {
-        this.runtimeModules = runtimeModules;
-    }
 
     private final Project project;
 
@@ -78,6 +51,7 @@ public class IosExtension {
     private List<String> forceLinkClasses = new ArrayList<>();
     private List<String> ignoreNativeLibs = new ArrayList<>();
     private List<String> runtimeModules = new ArrayList<>();
+    private boolean smallIio = false; // true if the libjavafx_iio should not include libjpeg
 
     private File infoPList;
 
@@ -226,5 +200,47 @@ public class IosExtension {
 
     public void setApsEnvironment(String apsEnvironment) {
         this.apsEnvironment = apsEnvironment;
+    }
+    
+    /**
+     * @return the smallIio
+     */
+    public boolean isSmallIio() {
+        return smallIio;
+    }
+
+    /**
+     * @param smallIio the smallIio to set
+     */
+    public void setSmallIio(boolean smallIio) {
+        this.smallIio = smallIio;
+    }
+
+    /**
+     * @return the ignoreNativeLibs
+     */
+    public List<String> getIgnoreNativeLibs() {
+        return ignoreNativeLibs;
+    }
+
+    /**
+     * @param ignoreNativeLibs the ignoreNativeLibs to set
+     */
+    public void setIgnoreNativeLibs(List<String> ignoreNativeLibs) {
+        this.ignoreNativeLibs = ignoreNativeLibs;
+    }
+
+    /**
+     * @return the runtimeModules
+     */
+    public List<String> getRuntimeModules() {
+        return runtimeModules;
+    }
+
+    /**
+     * @param runtimeModules the runtimeModules to set
+     */
+    public void setRuntimeModules(List<String> runtimeModules) {
+        this.runtimeModules = runtimeModules;
     }
 }
