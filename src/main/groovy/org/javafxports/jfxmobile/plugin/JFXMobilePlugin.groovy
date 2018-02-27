@@ -416,6 +416,8 @@ class JFXMobilePlugin implements Plugin<Project> {
         copyClassesForDesugar.from project.sourceSets.android.output.classesDirs
         copyClassesForDesugar.include '**/*.class'
         copyClassesForDesugar.includeEmptyDirs = false
+        copyClassesForDesugar.exclude 'META-INF/versions/**/*.class'
+        copyClassesForDesugar.exclude 'module-info.class'
         copyClassesForDesugar.destinationDir = project.file("${project.jfxmobile.android.temporaryDirectory}/desugar/input")
         copyClassesForDesugar.dependsOn project.tasks.compileJava, project.tasks.compileAndroidJava
         androidTasks.add(copyClassesForDesugar)
