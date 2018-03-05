@@ -637,7 +637,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         iphoneSimulatorTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(iphoneSimulatorTask)
 
-        CreateIpa createIpaTask = project.tasks.create("ios", CreateIpa)
+        CreateIpa createIpaTask = project.tasks.create("createIosApp", CreateIpa)
         createIpaTask.description = "Generates an iOS ipa containing the JavaFX application."
         createIpaTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(createIpaTask)
