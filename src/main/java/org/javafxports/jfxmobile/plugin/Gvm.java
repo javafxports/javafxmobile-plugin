@@ -45,7 +45,7 @@ public class Gvm {
 
     public static void build(String target, Project project ) {
         GvmConfig config = new GvmConfig(project);
-        boolean isLaunchOnDevice = "device".equals(target);
+        boolean isArm64 = ("ipa".equals(target)) || ("device".equals(target));
 
         SourceSetContainer sourceSetContainer = (SourceSetContainer) project.getProperties().get("sourceSets");
         SourceSet mainSourceSet = sourceSetContainer.findByName("main");
@@ -108,16 +108,22 @@ public class Gvm {
             }
             appBuilder.nativeLibs(nativeLibs);
 
-            if (isLaunchOnDevice) {
+            if (isArm64) {
                 appBuilder.arch("arm64");
             }
             appBuilder.build();
-            if (isLaunchOnDevice) {
-                appBuilder.launchOnDevice(config.getLaunchDir());
-            } else {
-                appBuilder.launchOnSimulator(config.getLaunchDir());
+            switch (target) {
+                case "device":
+                    appBuilder.launchOnDevice(config.getLaunchDir());
+                    break;
+                case "ipa":
+                    appBuilder.createIpa(config.getLaunchDir());
+                    break;
+                default:
+                    appBuilder.launchOnSimulator(config.getLaunchDir());
+
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

@@ -32,6 +32,14 @@
 package org.javafxports.jfxmobile.plugin.ios.task;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
+import org.javafxports.jfxmobile.plugin.Gvm;
 
 public class CreateIpa extends DefaultTask {
+
+    @TaskAction
+    public void action() {
+        Gvm.build("ipa", getProject());
+    }
+    
 }
