@@ -74,6 +74,12 @@ javafxmobile-plugin, you must make sure that you don't use any new Java 9 APIs.
     ```
     ANDROID_SDK/tools/bin/sdkmanager "platform-tools" "build-tools;27.0.3" "platforms;android-25" "extras;android;m2repository" "extras;google;m2repository"
     ```
+**Note!** You must run the sdkmanager using Java 8. 
+Before running this command, set your JAVA_HOME variable to a Java 8 installation, e.g. 
+```
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/
+```
+Make sure to switch back to Java 9 for your mobile development.
 
 3. Define a global gradle property named ANDROID_HOME inside ~/.gradle/gradle.properties that
 points to the location of the Android SDK:
