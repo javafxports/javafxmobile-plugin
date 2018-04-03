@@ -81,7 +81,9 @@ public class Gvm {
                     .ignoreNativeLibs(Arrays.asList(config.getIgnoreNativeLibs()))
                     .addRuntimeModules(Arrays.asList(config.getRuntimeModules()))
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
-                    .jarDependencies(config.getJarDependecies());
+                    .jarDependencies(config.getJarDependecies())
+                    .frameworks(Arrays.asList(config.getFrameworks()))
+                    .frameworksPaths(Arrays.asList(config.getFrameworksPaths()));
 
             List<String> nativeLibs = new ArrayList<>();
 
