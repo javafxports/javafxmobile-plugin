@@ -60,6 +60,8 @@ public class IosExtension {
 
     private String assetsDirectory = "src/ios/assets";
     private String nativeDirectory = "src/ios/jniLibs";
+    private List<String> frameworks = new ArrayList<>();
+    private List<String> frameworksPaths = new ArrayList<>();
 
     private File installDirectory;
     private File temporaryDirectory;
@@ -242,5 +244,37 @@ public class IosExtension {
      */
     public void setRuntimeModules(List<String> runtimeModules) {
         this.runtimeModules = runtimeModules;
+    }
+
+    /**
+     * 
+     * @return the frameworks
+     */
+    public List<String> getFrameworks() {
+        return frameworks;
+    }
+
+    /**
+     * @param frameworks the name of the frameworks to set
+     */
+    public void setFrameworks(List<String> frameworks) {
+        this.frameworks = frameworks;
+    }
+
+    /**
+     * 
+     * @return gets the directories that contain frameworks
+     */
+    public List<String> getFrameworksPaths() {
+        return frameworksPaths;
+    }
+
+    /**
+     * 
+     * @param frameworksPaths the name of the paths that contain one or more 
+     * frameworks
+     */
+    public void setFrameworksPaths(List<String> frameworksPaths) {
+        this.frameworksPaths = frameworksPaths;
     }
 }
