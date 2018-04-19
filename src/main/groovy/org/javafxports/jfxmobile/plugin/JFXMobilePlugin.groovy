@@ -122,8 +122,8 @@ class JFXMobilePlugin implements Plugin<Project> {
             throw new GradleException("You are using Gradle ${project.gradle.gradleVersion} but we require version 4.2 or higher")
         }
 
-        if (JavaVersion.current() != JavaVersion.VERSION_1_9) {
-            throw new GradleException("Gluon VM requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + ", but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
+        if (JavaVersion.current().isJava9Compatible()) {
+            throw new GradleException("Gluon VM requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
         }
 
         project.plugins.apply JavaPlugin
