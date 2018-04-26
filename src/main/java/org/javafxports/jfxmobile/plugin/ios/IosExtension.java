@@ -71,6 +71,8 @@ public class IosExtension {
     private String iosProvisioningProfile;
 
     private String apsEnvironment; // null | development | production
+    
+    private String minOSVersion;
 
     public IosExtension(Project project) {
         this.project = project;
@@ -277,4 +279,13 @@ public class IosExtension {
     public void setFrameworksPaths(List<String> frameworksPaths) {
         this.frameworksPaths = frameworksPaths;
     }
+
+    public String getMinOSVersion() {
+        return minOSVersion;
+    }
+
+    public void setMinOSVersion(String minOSVersion) {
+        this.minOSVersion = minOSVersion;
+    }
+    
 }

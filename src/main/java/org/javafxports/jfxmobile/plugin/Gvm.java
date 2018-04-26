@@ -83,7 +83,8 @@ public class Gvm {
                     .forcelinkClasses(Arrays.asList(config.getForcelinkClasses()))
                     .jarDependencies(config.getJarDependecies())
                     .frameworks(Arrays.asList(config.getFrameworks()))
-                    .frameworksPaths(Arrays.asList(config.getFrameworksPaths()));
+                    .frameworksPaths(Arrays.asList(config.getFrameworksPaths()))
+                    .minOSVersion(config.getMinOSVersion());
 
             List<String> nativeLibs = new ArrayList<>();
 

@@ -44,6 +44,7 @@ class GvmConfig {
     final String appName
     final String mainClassName
     final String launchDir
+    final String minOSVersion
 
     final String[]     forcelinkClasses
     final String[] runtimeModules;
@@ -78,6 +79,7 @@ class GvmConfig {
         frameworks       = project.jfxmobile.ios.frameworks as String[]
         frameworksPaths  = project.jfxmobile.ios.frameworksPaths as String[]
         ios              = project.jfxmobile.ios
+        minOSVersion     = project.jfxmobile.ios.minOSVersion;
     }
 
 
