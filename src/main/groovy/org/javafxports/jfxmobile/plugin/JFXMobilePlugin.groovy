@@ -122,10 +122,6 @@ class JFXMobilePlugin implements Plugin<Project> {
             throw new GradleException("You are using Gradle ${project.gradle.gradleVersion} but we require version 4.2 or higher")
         }
 
-        if (!JavaVersion.current().isJava9Compatible()) {
-            throw new GradleException("Gluon VM requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
-        }
-
         project.plugins.apply JavaPlugin
         project.plugins.apply ApplicationPlugin
         project.sourceSets {
@@ -314,6 +310,10 @@ class JFXMobilePlugin implements Plugin<Project> {
 
             // only configure android when one of the android tasks will be run
             if (androidTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
+                if (JavaVersion.current().getMajorVersion() != JavaVersion.VERSION_1_8.getMajorVersion()) {
+                    project.logger.warn("Warning: using Gluon VM with Android requires Java " + JavaVersion.VERSION_1_8.getMajorVersion() + ", but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
+                }
+
                 if (!hasAndroidMavenRepository)  {
                     throw new GradleException("You must install the Android Support Repository. Open the Android SDK Manager and choose the Android Support Repository from the Extras category at the bottom of the list of packages.")
                 }
@@ -366,6 +366,10 @@ class JFXMobilePlugin implements Plugin<Project> {
 
             // only configure ios when one of the ios tasks will be run
             if (iosTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
+                if (!JavaVersion.current().isJava9Compatible()) {
+                    project.logger.warn("Warning: using Gluon VM with iOS requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
+                }
+
                 // configure ios boot classpath
                 project.tasks.compileIosJava {
                     options.bootstrapClasspath = project.configurations.iosBootclasspath
@@ -424,17 +428,27 @@ class JFXMobilePlugin implements Plugin<Project> {
 
         Retrobuffer retrobufferTask = project.tasks.create("applyRetrobuffer", Retrobuffer)
         retrobufferTask.conventionMapping.map("classpath") { project.files(project.configurations.androidCompile, project.configurations.androidSdk) }
-        retrobufferTask.retrobufferInput = copyClassesForDesugar.destinationDir
         retrobufferTask.retrobufferOutput = project.file("${project.jfxmobile.android.temporaryDirectory}/retrobuffer/output")
-        retrobufferTask.dependsOn copyClassesForDesugar
-        androidTasks.add(retrobufferTask)
 
         Retrolambda retrolambdaTask = project.tasks.create("applyRetrolambda", Retrolambda)
         retrolambdaTask.conventionMapping.map("classpath") { project.files(project.configurations.androidCompileNoRetrolambda, project.configurations.androidSdk) }
-        retrolambdaTask.retrolambdaInput = retrobufferTask.retrobufferOutput
         retrolambdaTask.retrolambdaOutput = project.file("${project.jfxmobile.android.temporaryDirectory}/retrolambda/output")
-        retrolambdaTask.dependsOn retrobufferTask
         androidTasks.add(retrolambdaTask)
+
+        if (JavaVersion.current().isJava9Compatible()) {
+            retrobufferTask.retrobufferInput = copyClassesForDesugar.destinationDir
+            retrobufferTask.dependsOn copyClassesForDesugar
+
+            retrolambdaTask.retrolambdaInput = retrobufferTask.retrobufferOutput
+            retrolambdaTask.dependsOn retrobufferTask
+
+            androidTasks.add(retrobufferTask)
+        } else {
+            retrobufferTask.enabled = false
+
+            retrolambdaTask.retrolambdaInput = copyClassesForDesugar.destinationDir
+            retrolambdaTask.dependsOn copyClassesForDesugar
+        }
 
 /*
         AndroidTask<DesugarTask> desugarTask = project.jfxmobile.android.androidTaskRegistry.create(
