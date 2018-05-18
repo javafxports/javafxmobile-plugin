@@ -285,7 +285,9 @@ class JFXMobilePlugin implements Plugin<Project> {
                 if (project.preloaderClassName != null && !project.preloaderClassName.empty) {
                     systemProperties('javafx.preloader' : project.preloaderClassName)
                 }
-                jvmArgs += "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED"
+                if (JavaVersion.current().isJava9Compatible()) {
+                    jvmArgs += "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED"
+                }
             }
             project.tasks.jar {
                 from project.sourceSets.desktop.output
