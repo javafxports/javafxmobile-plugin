@@ -62,7 +62,7 @@ public class AndroidExtension {
     private final Project project;
 
     private String androidSdk;
-    private String compileSdkVersion = "25";
+    private String compileSdkVersion = "27";
     private String minSdkVersion = "4";
     private String targetSdkVersion;
     private boolean preview;
