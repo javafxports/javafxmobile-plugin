@@ -53,7 +53,6 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.tooling.BuildException
@@ -61,7 +60,6 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.javafxports.jfxmobile.plugin.android.task.Apk
 import org.javafxports.jfxmobile.plugin.android.task.CreateMainDexList
 import org.javafxports.jfxmobile.plugin.android.task.CreateManifestKeepList
-import org.javafxports.jfxmobile.plugin.android.task.DesugarTask
 import org.javafxports.jfxmobile.plugin.android.task.Dex
 import org.javafxports.jfxmobile.plugin.android.task.Install
 import org.javafxports.jfxmobile.plugin.android.task.MergeAssets
@@ -76,7 +74,6 @@ import org.javafxports.jfxmobile.plugin.android.task.ZipAlign
 import org.javafxports.jfxmobile.plugin.embedded.RemotePlatformConfiguration
 import org.javafxports.jfxmobile.plugin.embedded.task.CopyRemoteDir
 import org.javafxports.jfxmobile.plugin.embedded.task.RunEmbedded
-
 import org.javafxports.jfxmobile.plugin.ios.task.CreateIpa
 import org.javafxports.jfxmobile.plugin.ios.task.IosDevice
 import org.javafxports.jfxmobile.plugin.ios.task.IosInstall
@@ -91,7 +88,10 @@ import javax.inject.Inject
  */
 class JFXMobilePlugin implements Plugin<Project> {
 
-    private static RETROLAMBDA_COMPILE = 'net.orfjackal.retrolambda:retrolambda'
+    private static final RETROLAMBDA_COMPILE = 'net.orfjackal.retrolambda:retrolambda'
+    private static final EMBEDDED_TASKS_GROUP = 'Gluon Mobile for Embedded'
+    private static final ANDROID_TASKS_GROUP = 'Gluon Mobile for Android'
+    private static final IOS_TASKS_GROUP = 'Gluon Mobile for iOS'
 
     private ObjectFactory objectFactory
     private ToolingModelBuilderRegistry registry
@@ -564,6 +564,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         androidDebugTask.description("Generates a debug Android apk containing the JavaFX application.")
         androidDebugTask.dependsOn apkDebugTask
         androidTasks.add(androidDebugTask)
+        
+        androidTasks.each {
+            task -> task.group = ANDROID_TASKS_GROUP
+        }
     }
 
     private ZipAlign createApkTasks(String variant, SigningConfig signingConfig) {
@@ -657,6 +661,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         createIpaTask.description = "Generates an iOS ipa containing the JavaFX application."
         createIpaTask.dependsOn([project.tasks.iosClasses])
         iosTasks.add(createIpaTask)
+
+        iosTasks.each {
+            task -> task.group = IOS_TASKS_GROUP
+        }
     }
 
     private void createEmbeddedTasks() {
@@ -698,6 +706,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         runEmbeddedTask.conventionMapping.map('remotePlatform') { getRemotePlatformConfiguration() }
         runEmbeddedTask.dependsOn copyJarTask
         embeddedTasks.add(runEmbeddedTask)
+
+        embeddedTasks.each {
+            task -> task.group = EMBEDDED_TASKS_GROUP
+        }
     }
 
     /**
