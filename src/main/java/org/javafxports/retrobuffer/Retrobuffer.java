@@ -55,8 +55,12 @@ public class Retrobuffer {
         OutputDirectory outputDirectory = new OutputDirectory(outputDir);
         Files.walkFileTree(inputDir, new ClasspathVisitor() {
             @Override
-            protected void visitClass(byte[] bytecode) {
-                analyzer.analyze(bytecode);
+            protected void visitClass(Path relativePath, byte[] bytecode) {
+                try {
+                    analyzer.analyze(bytecode);
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Failed to analyze class: '" + relativePath + "'.\nClasses compiled with JDK 9 or later are currently not supported on Android. Please make sure that your project does not contain JDK 9+ dependencies.", e);
+                }
             }
 
             @Override

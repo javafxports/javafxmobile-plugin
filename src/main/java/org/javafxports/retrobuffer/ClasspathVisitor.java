@@ -56,7 +56,7 @@ public abstract class ClasspathVisitor extends SimpleFileVisitor<Path> {
         byte[] content = Files.readAllBytes(file);
 
         if (isJavaClass(relativePath)) {
-            visitClass(content);
+            visitClass(relativePath, content);
         } else {
             visitResource(relativePath, content);
         }
@@ -64,7 +64,7 @@ public abstract class ClasspathVisitor extends SimpleFileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    protected abstract void visitClass(byte[] bytecode) throws IOException;
+    protected abstract void visitClass(Path relativePath, byte[] bytecode) throws IOException;
 
     protected abstract void visitResource(Path relativePath, byte[] bytecode) throws IOException;
 
