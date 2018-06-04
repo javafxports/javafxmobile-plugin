@@ -312,10 +312,6 @@ class JFXMobilePlugin implements Plugin<Project> {
 
             // only configure android when one of the android tasks will be run
             if (androidTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
-                if (JavaVersion.current().getMajorVersion() != JavaVersion.VERSION_1_8.getMajorVersion()) {
-                    project.logger.warn("Warning: using Gluon VM with Android requires Java " + JavaVersion.VERSION_1_8.getMajorVersion() + ", but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
-                }
-
                 if (!hasAndroidMavenRepository)  {
                     throw new GradleException("You must install the Android Support Repository. Open the Android SDK Manager and choose the Android Support Repository from the Extras category at the bottom of the list of packages.")
                 }
