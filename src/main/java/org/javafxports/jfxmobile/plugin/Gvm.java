@@ -84,6 +84,8 @@ public class Gvm {
                     .jarDependencies(config.getJarDependecies())
                     .frameworks(Arrays.asList(config.getFrameworks()))
                     .frameworksPaths(Arrays.asList(config.getFrameworksPaths()))
+                    .signingIdentity(config.getIosSignIdentity())
+                    .provisioningProfile(config.getIosProvisioningProfile())
                     .minOSVersion(config.getMinOSVersion());
 
             List<String> nativeLibs = new ArrayList<>();

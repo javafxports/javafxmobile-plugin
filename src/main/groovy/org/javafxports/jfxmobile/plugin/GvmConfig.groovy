@@ -44,6 +44,8 @@ class GvmConfig {
     final String appName
     final String mainClassName
     final String launchDir
+    final String iosSignIdentity;
+    final String iosProvisioningProfile;
     final String minOSVersion
 
     final String[]     forcelinkClasses
@@ -79,6 +81,8 @@ class GvmConfig {
         frameworks       = project.jfxmobile.ios.frameworks as String[]
         frameworksPaths  = project.jfxmobile.ios.frameworksPaths as String[]
         ios              = project.jfxmobile.ios
+        iosSignIdentity  = project.jfxmobile.ios.iosSignIdentity;
+        iosProvisioningProfile = project.jfxmobile.ios.iosProvisioningProfile;
         minOSVersion     = project.jfxmobile.ios.minOSVersion;
     }
 
