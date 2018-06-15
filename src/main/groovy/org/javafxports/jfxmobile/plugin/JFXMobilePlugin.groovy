@@ -365,7 +365,7 @@ class JFXMobilePlugin implements Plugin<Project> {
             // only configure ios when one of the ios tasks will be run
             if (iosTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
                 if (!JavaVersion.current().isJava9Compatible()) {
-                    project.logger.warn("Warning: using Gluon VM with iOS requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
+                    throw new GradleException("Gluon VM with iOS requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
                 }
 
                 // configure ios boot classpath
