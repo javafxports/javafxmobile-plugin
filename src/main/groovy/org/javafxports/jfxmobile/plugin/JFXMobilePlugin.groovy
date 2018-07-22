@@ -179,7 +179,6 @@ class JFXMobilePlugin implements Plugin<Project> {
             }
 
             androidBootclasspath
-            iosBootclasspath
 
             androidSdk
             dalvikSdk
@@ -370,7 +369,7 @@ class JFXMobilePlugin implements Plugin<Project> {
 
                 // configure ios boot classpath
                 project.tasks.compileIosJava {
-                    options.bootstrapClasspath = project.configurations.iosBootclasspath
+                    dependsOn project.tasks.compileJava
                 }
 
                 // NOTE: from is set after all configuration for iosRuntime has completed
