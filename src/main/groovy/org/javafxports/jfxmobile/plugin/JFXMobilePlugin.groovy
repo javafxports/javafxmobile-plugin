@@ -367,11 +367,6 @@ class JFXMobilePlugin implements Plugin<Project> {
                     throw new GradleException("Gluon VM with iOS requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
                 }
 
-                // configure ios boot classpath
-                project.tasks.compileIosJava {
-                    dependsOn project.tasks.compileJava
-                }
-
                 // NOTE: from is set after all configuration for iosRuntime has completed
 //                project.tasks.iosExtractNativeLibs.from {
 //                    project.configurations.iosRuntime.collect { project.zipTree(it).matching { include 'native/*.a' }}
