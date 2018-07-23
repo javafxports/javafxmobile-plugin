@@ -725,7 +725,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         }
         project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/rt/lib")
         if (!project.jfxmobile.android.dalvikSdkLib.exists()) {
-            throw new GradleException("Configured dalvikSdk is invalid: ${project.jfxmobile.android.dalvikSdk}")
+            project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/modules_libs");
+            if (!project.jfxmobile.android.dalvikSdkLib.exists()) {
+                throw new GradleException("Configured dalvikSdk is invalid: ${project.jfxmobile.android.dalvikSdk}")
+            }
         }
         project.logger.info("Using javafxports dalvik sdk from location ${project.jfxmobile.android.dalvikSdk}")
 
