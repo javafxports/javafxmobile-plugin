@@ -179,7 +179,6 @@ class JFXMobilePlugin implements Plugin<Project> {
             }
 
             androidBootclasspath
-            iosBootclasspath
 
             androidSdk
             dalvikSdk
@@ -366,11 +365,6 @@ class JFXMobilePlugin implements Plugin<Project> {
             if (iosTasks.find { project.gradle.taskGraph.hasTask(it) } != null) {
                 if (!JavaVersion.current().isJava9Compatible()) {
                     throw new GradleException("Gluon VM with iOS requires Java " + JavaVersion.VERSION_1_9.getMajorVersion() + " or higher, but Java " + JavaVersion.current().getMajorVersion() + " was detected.");
-                }
-
-                // configure ios boot classpath
-                project.tasks.compileIosJava {
-                    options.bootstrapClasspath = project.configurations.iosBootclasspath
                 }
 
                 // NOTE: from is set after all configuration for iosRuntime has completed
