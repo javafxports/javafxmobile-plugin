@@ -327,9 +327,9 @@ class JFXMobilePlugin implements Plugin<Project> {
                     androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
                         include 'compat-1.0.0.jar'
                     }
-                    androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
-                        include 'jfxrt.jar'
-                    }
+                    // androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
+                        // include 'jfxrt.jar'
+                    // }
                 }
 
                 // configure android boot classpath
@@ -413,7 +413,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         copyClassesForDesugar.include '**/*.class'
         copyClassesForDesugar.includeEmptyDirs = false
         copyClassesForDesugar.exclude 'META-INF/versions/**/*.class'
-        copyClassesForDesugar.exclude 'module-info.class'
+        copyClassesForDesugar.exclude '**/module-info.class'
         copyClassesForDesugar.destinationDir = project.file("${project.jfxmobile.android.temporaryDirectory}/desugar/input")
         copyClassesForDesugar.dependsOn project.tasks.compileJava, project.tasks.compileAndroidJava
         androidTasks.add(copyClassesForDesugar)
@@ -459,6 +459,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         mergeClassesIntoJarTask.from retrolambdaTask.retrolambdaOutput
 //        mergeClassesIntoJarTask.from desugarTask.get(project.jfxmobile.android.taskFactory).outputDir
         mergeClassesIntoJarTask.include '**/*.class'
+        mergeClassesIntoJarTask.exclude '**/module-info.class'
         mergeClassesIntoJarTask.dependsOn retrolambdaTask
 //        mergeClassesIntoJarTask.dependsOn desugarTask.get(project.jfxmobile.android.taskFactory)
         androidTasks.add(mergeClassesIntoJarTask)

@@ -50,6 +50,7 @@ configurations.all {
 }
 
 dependencies {
+    compile 'net.sf.proguard:proguard-gradle:6.0.3'
     compile gradleApi()
     compile localGroovy()
     compile 'com.android.tools.build:gradle:3.0.1'
