@@ -59,7 +59,7 @@ public class Retrobuffer {
                 try {
                     analyzer.analyze(bytecode);
                 } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Failed to analyze class: '" + relativePath + "'.\nClasses compiled with JDK 9 or later are currently not supported on Android. Please make sure that your project does not contain JDK 9+ dependencies.", e);
+                    throw new RuntimeException("Failed to analyze class: '" + relativePath.toAbsolutePath() + "'.\nClasses compiled with JDK 9 or later are currently not supported on Android. Please make sure that your project does not contain JDK 9+ dependencies.", e);
                 }
             }
 

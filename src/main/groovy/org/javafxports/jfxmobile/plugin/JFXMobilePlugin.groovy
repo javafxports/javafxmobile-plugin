@@ -324,7 +324,8 @@ class JFXMobilePlugin implements Plugin<Project> {
                         project.configurations.androidRuntimeNoRetrolambda)
 
                 project.dependencies {
-                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
+                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/lib") {
+                        include 'jfxdvk.jar'
                         include 'compat-1.0.0.jar'
                     }
                     // androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
@@ -342,10 +343,16 @@ class JFXMobilePlugin implements Plugin<Project> {
 
                 // NOTE: from is set after all configuration for androidRuntime has completed
                 project.tasks.copyClassesForDesugar.from {
-                    (project.configurations.androidRuntime - project.configurations.androidRuntimeNoRetrolambda - project.configurations.androidSdk).filter {
-                        !it.isDirectory()
+                    (project.configurations.androidRuntime - project.configurations.androidRuntimeNoRetrolambda - project.configurations.androidSdk)
+                            .filter {
+                        !it.isDirectory()}.filter{
+                            String myname = it.getName();
+                            if (myname.startsWith("javafx-")) return false;
+                        project.logger.info("consider $it.name OR $myname");
+                        true;
+
                     }.collect {
-                        project.logger.info("Apply Desugar to $it")
+                        project.logger.info("Apply Desugar to $it");
                         project.zipTree(it)
                     }
                 }
@@ -583,6 +590,8 @@ class JFXMobilePlugin implements Plugin<Project> {
                 "${project.jfxmobile.android.dalvikSdkLib}",
                 "${project.jfxmobile.android.nativeDirectory}"
             ).files
+           // project.logger.info("NATIVE LIBS FROM ${project.jfxmobile.android.dalvikSdkLib}")
+
         }
         apkTask.conventionMapping.map("outputFile") { project.file("${project.jfxmobile.android.installDirectory}/${project.name}-unaligned.apk") }
         apkTask.conventionMapping.map("mainResourcesDirectory") {
@@ -724,12 +733,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         if (project.jfxmobile.android.dalvikSdk == null) {
             project.jfxmobile.android.dalvikSdk = resolveSdk(project.configurations.dalvikSdk, "dalvik-sdk")
         }
-        project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/rt/lib")
+        project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/lib")
         if (!project.jfxmobile.android.dalvikSdkLib.exists()) {
-            project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/modules_libs");
-            if (!project.jfxmobile.android.dalvikSdkLib.exists()) {
-                throw new GradleException("Configured dalvikSdk is invalid: ${project.jfxmobile.android.dalvikSdk}")
-            }
+                throw new GradleException("Configured dalvikSdk is invalid (no lib directory found): ${project.jfxmobile.android.dalvikSdk}")
+
         }
         project.logger.info("Using javafxports dalvik sdk from location ${project.jfxmobile.android.dalvikSdk}")
 
