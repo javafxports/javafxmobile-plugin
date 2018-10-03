@@ -59,6 +59,9 @@ class Dex extends DefaultTask {
 
     @TaskAction
     void dex() {
+        String ap = getInputListFile().absolutePath;
+        project.logger.info("DEXINPUT\n\n\n\n\n\n $ap");
+
         project.ant.java(outputproperty: "dexCmdOut",
             errorProperty: "dexCmdErr",
             resultProperty : "dexResult",
@@ -88,12 +91,12 @@ class Dex extends DefaultTask {
             }
             arg(value: "--no-optimize")
             arg(value: "--multi-dex")
+            arg(value: "--min-sdk-version=26")
             arg(value: "--main-dex-list=" + getMainDexListFile().absolutePath)
             arg(value: "--core-library")
             arg(value: "--output=" + getOutputDirectory().absolutePath)
             arg(value: "--input-list=" + getInputListFile().absolutePath)
         }
-
         project.logger.debug("Dex result value = ${project.ant.project.properties.dexResult}")
         if (project.ant.project.properties.dexResult != "0") {
             throw new GradleException(project.ant.project.properties.dexCmdErr)

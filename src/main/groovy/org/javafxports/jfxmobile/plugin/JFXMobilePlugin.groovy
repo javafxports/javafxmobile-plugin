@@ -255,9 +255,9 @@ class JFXMobilePlugin implements Plugin<Project> {
             // configure android and ios dependencies
             project.dependencies {
                 retrolambdaConfig "${RETROLAMBDA_COMPILE}:${project.jfxmobile.android.retrolambdaVersion}"
-                androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
-                    force = true
-                }
+//                androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
+//                    force = true
+//                }
                 dalvikSdk "org.javafxports:dalvik-sdk:${project.jfxmobile.javafxportsVersion}@zip"
                 sshAntTask 'org.apache.ant:ant-jsch:1.9.6'
             }
@@ -324,15 +324,18 @@ class JFXMobilePlugin implements Plugin<Project> {
                         project.configurations.androidRuntimeNoRetrolambda)
 
                 project.dependencies {
-                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/lib") {
+                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
                         include 'jfxdvk.jar'
                         include 'compat-1.0.0.jar'
-                    }
-                    // androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
-                        // include 'jfxrt.jar'
-                    // }
-                }
+//                    }
+//                     androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
+                         include 'javafx.base.jar'
+                         include 'javafx.graphics.jar'
+                         include 'javafx.controls.jar'
 
+                     }
+                }
+project.logger.info("PROJECTDEPENDENCIES = $project.dependencies \n\n\n\n\n\n\n\n\n\n")
                 // configure android boot classpath
                 def androidBootclasspath = project.configurations.androidBootclasspath
                 if (!androidBootclasspath.empty) {
