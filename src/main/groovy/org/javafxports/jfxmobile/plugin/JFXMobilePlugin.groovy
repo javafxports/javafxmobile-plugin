@@ -327,11 +327,12 @@ class JFXMobilePlugin implements Plugin<Project> {
                     androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
                         include 'jfxdvk.jar'
                         include 'compat-1.0.0.jar'
+                        include 'jfxrt.jar'
 //                    }
 //                     androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
-                         include 'javafx.base.jar'
-                         include 'javafx.graphics.jar'
-                         include 'javafx.controls.jar'
+//                         include 'javafx.base.jar'
+//                         include 'javafx.graphics.jar'
+//                         include 'javafx.controls.jar'
 
                      }
                 }
