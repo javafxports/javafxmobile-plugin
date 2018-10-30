@@ -233,6 +233,12 @@ class JFXMobilePlugin implements Plugin<Project> {
                 }
             }
         }
+        
+        // apply maven google repository
+        project.logger.info("Adding Google's maven repository to project repositories.")
+        project.repositories {
+            google()
+        }
 
         project.afterEvaluate {
             // apply downConfig to project configurations
