@@ -261,9 +261,9 @@ class JFXMobilePlugin implements Plugin<Project> {
             // configure android and ios dependencies
             project.dependencies {
                 retrolambdaConfig "${RETROLAMBDA_COMPILE}:${project.jfxmobile.android.retrolambdaVersion}"
-                androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
-                    force = true
-                }
+//                androidCompile("org.javafxports:jfxdvk:${project.jfxmobile.javafxportsVersion}") {
+//                    force = true
+//                }
                 dalvikSdk "org.javafxports:dalvik-sdk:${project.jfxmobile.javafxportsVersion}@zip"
                 sshAntTask 'org.apache.ant:ant-jsch:1.9.6'
             }
@@ -330,14 +330,19 @@ class JFXMobilePlugin implements Plugin<Project> {
                         project.configurations.androidRuntimeNoRetrolambda)
 
                 project.dependencies {
-                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
+                    androidRuntime project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
+                        include 'jfxdvk.jar'
                         include 'compat-1.0.0.jar'
-                    }
-                    androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}/ext") {
                         include 'jfxrt.jar'
-                    }
-                }
+//                    }
+//                     androidRuntimeNoRetrolambda project.fileTree("${project.jfxmobile.android.dalvikSdkLib}") {
+//                         include 'javafx.base.jar'
+//                         include 'javafx.graphics.jar'
+//                         include 'javafx.controls.jar'
 
+                     }
+                }
+project.logger.info("PROJECTDEPENDENCIES = $project.dependencies \n\n\n\n\n\n\n\n\n\n")
                 // configure android boot classpath
                 def androidBootclasspath = project.configurations.androidBootclasspath
                 if (!androidBootclasspath.empty) {
@@ -348,10 +353,16 @@ class JFXMobilePlugin implements Plugin<Project> {
 
                 // NOTE: from is set after all configuration for androidRuntime has completed
                 project.tasks.copyClassesForDesugar.from {
-                    (project.configurations.androidRuntime - project.configurations.androidRuntimeNoRetrolambda - project.configurations.androidSdk).filter {
-                        !it.isDirectory()
+                    (project.configurations.androidRuntime - project.configurations.androidRuntimeNoRetrolambda - project.configurations.androidSdk)
+                            .filter {
+                        !it.isDirectory()}.filter{
+                            String myname = it.getName();
+                            if (myname.startsWith("javafx-")) return false;
+                        project.logger.info("consider $it.name OR $myname");
+                        true;
+
                     }.collect {
-                        project.logger.info("Apply Desugar to $it")
+                        project.logger.info("Apply Desugar to $it");
                         project.zipTree(it)
                     }
                 }
@@ -419,7 +430,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         copyClassesForDesugar.include '**/*.class'
         copyClassesForDesugar.includeEmptyDirs = false
         copyClassesForDesugar.exclude 'META-INF/versions/**/*.class'
-        copyClassesForDesugar.exclude 'module-info.class'
+        copyClassesForDesugar.exclude '**/module-info.class'
         copyClassesForDesugar.destinationDir = project.file("${project.jfxmobile.android.temporaryDirectory}/desugar/input")
         copyClassesForDesugar.dependsOn project.tasks.compileJava, project.tasks.compileAndroidJava
         androidTasks.add(copyClassesForDesugar)
@@ -465,6 +476,7 @@ class JFXMobilePlugin implements Plugin<Project> {
         mergeClassesIntoJarTask.from retrolambdaTask.retrolambdaOutput
 //        mergeClassesIntoJarTask.from desugarTask.get(project.jfxmobile.android.taskFactory).outputDir
         mergeClassesIntoJarTask.include '**/*.class'
+        mergeClassesIntoJarTask.exclude '**/module-info.class'
         mergeClassesIntoJarTask.dependsOn retrolambdaTask
 //        mergeClassesIntoJarTask.dependsOn desugarTask.get(project.jfxmobile.android.taskFactory)
         androidTasks.add(mergeClassesIntoJarTask)
@@ -588,6 +600,8 @@ class JFXMobilePlugin implements Plugin<Project> {
                 "${project.jfxmobile.android.dalvikSdkLib}",
                 "${project.jfxmobile.android.nativeDirectory}"
             ).files
+           // project.logger.info("NATIVE LIBS FROM ${project.jfxmobile.android.dalvikSdkLib}")
+
         }
         apkTask.conventionMapping.map("outputFile") { project.file("${project.jfxmobile.android.installDirectory}/${project.name}-unaligned.apk") }
         apkTask.conventionMapping.map("mainResourcesDirectory") {
@@ -729,9 +743,10 @@ class JFXMobilePlugin implements Plugin<Project> {
         if (project.jfxmobile.android.dalvikSdk == null) {
             project.jfxmobile.android.dalvikSdk = resolveSdk(project.configurations.dalvikSdk, "dalvik-sdk")
         }
-        project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/rt/lib")
+        project.jfxmobile.android.dalvikSdkLib = project.file("${project.jfxmobile.android.dalvikSdk}/lib")
         if (!project.jfxmobile.android.dalvikSdkLib.exists()) {
-            throw new GradleException("Configured dalvikSdk is invalid: ${project.jfxmobile.android.dalvikSdk}")
+                throw new GradleException("Configured dalvikSdk is invalid (no lib directory found): ${project.jfxmobile.android.dalvikSdk}")
+
         }
         project.logger.info("Using javafxports dalvik sdk from location ${project.jfxmobile.android.dalvikSdk}")
 

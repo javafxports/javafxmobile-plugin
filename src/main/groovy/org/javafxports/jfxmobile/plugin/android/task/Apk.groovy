@@ -121,8 +121,11 @@ class Apk extends DefaultTask {
             }
 
             if (getJniFolders() != null) {
+                project.logger.info("WE HAVE JNI FOLDERS");
                 getJniFolders().each {
+                    project.logger.info("FOLDER? $it")
                     if (it.isDirectory()) {
+                        project.logger.info("ADDING NATIVE LIBS")
                         apkBuilder.addNativeLibraries(it)
                     }
                 }
